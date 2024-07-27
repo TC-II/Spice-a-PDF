@@ -1,5 +1,5 @@
 import svgwrite
-import re
+#import re
 from reportlab.pdfgen import canvas
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPDF
