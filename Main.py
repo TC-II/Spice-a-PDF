@@ -146,11 +146,84 @@ class PNP(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0], slf.position[1] + 5, slf.windows.get(3, (56, 68, "Left")), slf.attributes.get("Value", " "))
 
+class Not(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/74HCU04 Not.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-176, 32, "Left")), slf.attributes.get("Value", slf.component_type), "9px",  (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(123, (-176, 48, "Left")), slf.attributes.get("Value2", slf.component_type), "9px", (int(slf.orientation[1:]))%180)
+
+class Amp_Current(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Current.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class Amp_Transimpedance(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Transimpedance.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class Arrow(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class Arrow_curve(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_curve.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class Bypass(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/bypass.svg')
+       
+class Current(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/current.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class Cell(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/cell.svg')
+        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] + 21, slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] + 10, slf.windows.get(3, (24, 56, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class Diode(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/diode.svg')
+        slf.add_text(dwg, slf.position[0] + 7, slf.position[1] + 4, slf.windows.get(0, (24, 0, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0] + 7, slf.position[1] - 4, slf.windows.get(3, (24, 64, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class LM311(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/LM311.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-176, 32, "Left")), slf.attributes.get("Value", slf.component_type), "9px",  (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(123, (-176, 48, "Left")), slf.attributes.get("Value2", slf.component_type), "9px", (int(slf.orientation[1:]))%180)
+
+class Switch(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/switch.svg')
+       
+class Zener(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/zener.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 0, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (24, 64, "Left")), slf.attributes.get("Value", slf.component_type))
+
+
+
 def parse_asc_file(filename):
     wires = []
     components = []
     current_component = None
     windowsize = None
+
     with open(filename, 'r') as file:
         for line in file:
             parts = line.split()
@@ -162,10 +235,22 @@ def parse_asc_file(filename):
                     components.append(current_component)
                 component_type = parts[1]
                 if '\\' in component_type:
-                    component_type = component_type.split('\\')[-1]
-                x, y = map(int, parts[2:4])
-                orientation = parts[4] if len(parts) > 4 else "R0"
-                current_component = {"type": component_type, "position": (x, y), "orientation": orientation, "attributes": {}, "windows": {}}
+                    component_type_parts = component_type.split('\\')
+                    # Caso especial: si el nombre del componente termina en "\\"
+                    if component_type_parts[-1] == '':
+                        component_name = parts[2]
+                        coords_and_orientation = parts[3:]
+                    else:
+                        component_name = component_type_parts[-1].split()[-1]
+                        coords_and_orientation = parts[2:]
+                else:
+                    component_name = component_type
+                    coords_and_orientation = parts[2:]
+
+                x, y = map(int, coords_and_orientation[:2])
+                orientation = coords_and_orientation[2] if len(coords_and_orientation) > 2 else "R0"
+                
+                current_component = {"type": component_name, "position": (x, y), "orientation": orientation, "attributes": {}, "windows": {}}
             elif parts[0] == "SYMATTR" and current_component:
                 attribute_name = parts[1]
                 attribute_value = " ".join(parts[2:])
@@ -181,12 +266,13 @@ def parse_asc_file(filename):
                 orientation = "R0"
                 flag = {"type": component_type, "position": (x, y), "orientation": orientation, "attributes": {}, "windows": {}}
                 flag["attributes"]["Value"] = parts[3]
-                components.append(flag)               
+                components.append(flag)
             elif parts[0] == 'SHEET':
                 windowsize = (parts[2], parts[3])
 
         if current_component:
             components.append(current_component)
+
     return wires, components, windowsize
 
 def get_cable_direction(pin_position, cables):
@@ -246,6 +332,18 @@ def create_circuit_svg(filename, wires, components):
 
     # Dibujar componentes
     component_objects = {
+        "Not": Not,     
+        "Amp_Current": Amp_Current,
+        "Amp_Transimpedance": Amp_Transimpedance,
+        "arrow": Arrow,
+        "arrow_curve": Arrow_curve,
+        "bypass": Bypass,
+        "current": Current,
+        "cell": Cell,
+        "diode": Diode,
+        "LM311": LM311,
+        "switch_sch": Switch,
+        "zener": Zener,
         "res": Resistor,
         "cap": Capacitor,
         "OA_Ideal": OpAmp,
