@@ -156,14 +156,23 @@ class Not(Component):
 class Amp_Current(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Current.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
 
 class Amp_Transimpedance(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Transimpedance.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+
+class Ampmeter(Component):
+    def draw(slf, dwg): 
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/ampmeter.svg')
+        if (slf.orientation == "R0" or slf.orientation == "R180"):
+            offset = 7
+        else:
+            offset = 0
+        slf.add_text(dwg, slf.position[0] + offset, slf.position[1] + offset, slf.windows.get(0, (-23, 14, "Left")), slf.attributes.get("InstName", ""), angle = 90)
 
 class Arrow(Component):
     def draw(slf, dwg):
@@ -183,15 +192,21 @@ class Bypass(Component):
        
 class Current(Component):
     def draw(slf, dwg):
+
+        if (slf.orientation == "R0" or slf.orientation == "R180"):
+            offset = 15
+        else:
+            offset = 0
+    
         slf.draw_image_with_rotation(dwg, 'Skins/Default/current.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+        slf.add_text(dwg, slf.position[0], slf.position[1] - offset - 3, slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1] - offset, slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
 
 class Cell(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/cell.svg')
-        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] + 21, slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] + 10, slf.windows.get(3, (24, 56, "Left")), slf.attributes.get("Value", slf.component_type))
+        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] + 6, slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] - 8, slf.windows.get(3, (24, 56, "Left")), slf.attributes.get("Value", slf.component_type))
 
 class Diode(Component):
     def draw(slf, dwg):
@@ -335,6 +350,7 @@ def create_circuit_svg(filename, wires, components):
         "Not": Not,     
         "Amp_Current": Amp_Current,
         "Amp_Transimpedance": Amp_Transimpedance,
+        "ampmeter": Ampmeter, 
         "arrow": Arrow,
         "arrow_curve": Arrow_curve,
         "bypass": Bypass,
@@ -342,7 +358,7 @@ def create_circuit_svg(filename, wires, components):
         "cell": Cell,
         "diode": Diode,
         "LM311": LM311,
-        "switch_sch": Switch,
+        "switch": Switch,
         "zener": Zener,
         "res": Resistor,
         "cap": Capacitor,
