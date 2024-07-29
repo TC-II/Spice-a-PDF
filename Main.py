@@ -1,8 +1,17 @@
 import svgwrite
-#import re
+import re
+import os
 from reportlab.pdfgen import canvas
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPDF
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
+
+import reportlab.rl_config
+reportlab.rl_config.warnOnMissingFontGlyphs = 0
+
+font_path = os.path.join('fonts', 'cmunrm.ttf')
+
 
 class Component:
     def __init__(slf, component_type, position, orientation, attributes, windows):
@@ -45,8 +54,7 @@ class Component:
             return -x, -y
         elif slf.orientation in ["R270", "M270"]:
             return y, -x
-        
-        
+                
 
     def add_text(slf, dwg, x, y, window, text, size = "20px", angle = 0):
         coords = slf.adjust_coordinates_for_orientation_and_alignment(window[0], window[1], window[2])
@@ -54,9 +62,9 @@ class Component:
             raise ValueError("Coords cannot be None. Please check the window value.")
         
         if window[2] in ["VTop", "VBottom"]:
-            dwg.add(dwg.text(text, insert=(x + coords[0], y + coords[1]), font_family="Arial", font_size=size, text_anchor="middle"))
+            dwg.add(dwg.text(text, insert=(x + coords[0], y + coords[1]), font_family="CMU Serif", font_size=size, text_anchor="middle"))
         else:
-            text_element = dwg.text(text, insert=(x + coords[0], y + coords[1]), font_family="Arial", font_size=size, text_anchor="end" if (slf.orientation == "R90" or slf.orientation == "R180") else "start")
+            text_element = dwg.text(text, insert=(x + coords[0], y + coords[1]), font_family="CMU Serif", font_size=size, text_anchor="end" if (slf.orientation == "R90" or slf.orientation == "R180") else "start")
             text_element.rotate(-angle, center = (x + coords[0], y + coords[1]))
             dwg.add(text_element)
 
@@ -181,8 +189,6 @@ def parse_asc_file(filename):
             components.append(current_component)
     return wires, components, windowsize
 
-
-
 def get_cable_direction(pin_position, cables):
     for (start, end) in cables:
         if pin_position == start:
@@ -218,7 +224,7 @@ def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
     else:
         text_position = pin_position
     
-    dwg.add(dwg.text(text, insert=text_position, font_family="Arial", font_size="20px", text_anchor="middle"))
+    dwg.add(dwg.text(text, insert=text_position, font_family="CMU Serif", font_size="20px", text_anchor="middle"))
 
 def create_circuit_svg(filename, wires, components):
     dwg = svgwrite.Drawing(filename, size=windowsize, profile='tiny')
@@ -266,17 +272,49 @@ def create_circuit_svg(filename, wires, components):
 
     dwg.save()
 
+def modify_svg_font(svg_filename, output_svg_filename, font_name):
+    with open(svg_filename, 'r', encoding='utf-8') as file:
+        svg_content = file.read()
+    
+    # Reemplaza cualquier referencia de fuente por CMU Serif
+    modified_svg_content = re.sub(r'font-family="[^"]+"', f'font-family="{font_name}"', svg_content)
+    
+    with open(output_svg_filename, 'w', encoding='utf-8') as file:
+        file.write(modified_svg_content)
+
 def svg_to_pdf(svg_filename, pdf_filename):
+    # Registrar la fuente CMU Serif
+    pdfmetrics.registerFont(TTFont('CMU_Serif', font_path))
+    
+    # Registrar la fuente con el mapeo de svglib
+    from svglib.fonts import register_font
+    register_font('CMU_Serif', font_path)
+    
+    # Leer el dibujo SVG
     drawing = svg2rlg(svg_filename)
+    
+    # Crear el canvas PDF
     c = canvas.Canvas(pdf_filename, pagesize= windowsize)
+    
+    # Dibujar el SVG en el PDF
     renderPDF.draw(drawing, c, 0, 0)
+    
+    # Guardar el PDF
     c.showPage()
     c.save()
 
+
 # Ejemplo de uso
-asc_filename = "Cables.asc"
-svg_filename = "Output.svg"
-pdf_filename = "Output.pdf"
+asc_filename = 'Cables.asc'
+modified_svg_filename = 'ModifiedOutput.svg'
+svg_filename = 'Output.svg'
+pdf_filename = 'Output.pdf'
+
 wires, components, windowsize = parse_asc_file(asc_filename)
+
 create_circuit_svg(svg_filename, wires, components)
-svg_to_pdf(svg_filename, pdf_filename)
+
+# Modifica el SVG para usar CMU Serif
+modify_svg_font(svg_filename, modified_svg_filename, 'CMU_Serif')
+
+svg_to_pdf(modified_svg_filename, pdf_filename)
