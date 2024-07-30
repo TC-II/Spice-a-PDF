@@ -14,10 +14,11 @@ font_path = os.path.join('fonts', 'cmunrm.ttf')
 
 
 class Component:
-    def __init__(slf, component_type, position, orientation, attributes, windows):
+    def __init__(slf, component_type, position, orientation, flip, attributes, windows):
         slf.component_type = component_type
         slf.position = position
         slf.orientation = orientation
+        slf.flip = flip
         slf.attributes = attributes
         slf.windows = windows
 
@@ -26,53 +27,54 @@ class Component:
 
     def adjust_coordinates_for_orientation_and_alignment(slf, x, y, alignment):
         if alignment == "Left":
-            if slf.orientation in ["R0", "M0"]:
+            if slf.orientation == "R0":
                 y += 6.5
                 return x, y
-            elif slf.orientation in ["R180", "M180"]:
-                y -= 7
-                return -x, -y
+            elif slf.orientation == "R90":
+                x += 7
+                return -y, x
         elif alignment == "VTop":
-            if slf.orientation in ["R90", "M90"]:
+            if slf.orientation == "R90":
                 x += 22
             elif slf.orientation == "R270":
                 x += 6
         elif alignment == "VBottom":
-            if slf.orientation in ["R90", "M90"]:
+            if slf.orientation == "R90":
                 x -= 6
-            elif slf.orientation in ["R270", "M270"]:
+            elif slf.orientation == "R270":
                 x -= 18
 
         return slf.rotate_coordinates(x, y)
 
     def rotate_coordinates(slf, x, y):
-        if slf.orientation in ["R0", "M0"]:
+        if slf.orientation == "R0":
             return x, y
-        elif slf.orientation in ["R90", "M90"]:
+        elif slf.orientation == "R90":
             return -y, x
-        elif slf.orientation in ["R180", "M180"]:
+        elif slf.orientation == "R180":
             return -x, -y
-        elif slf.orientation in ["R270", "M270"]:
+        elif slf.orientation == "R270":
             return y, -x
                 
 
     def add_text(slf, dwg, x, y, window, text, size = "20px", angle = 0):
-        coords = slf.adjust_coordinates_for_orientation_and_alignment(window[0], window[1], window[2])
-        if coords is None:
-            raise ValueError("Coords cannot be None. Please check the window value.")
-        
-        if window[2] in ["VTop", "VBottom"]:
-            dwg.add(dwg.text(text, insert=(x + coords[0], y + coords[1]), font_family="CMU Serif", font_size=size, text_anchor="middle"))
-        else:
-            text_element = dwg.text(text, insert=(x + coords[0], y + coords[1]), font_family="CMU Serif", font_size=size, text_anchor="end" if (slf.orientation == "R90" or slf.orientation == "R180") else "start")
-            text_element.rotate(-angle, center = (x + coords[0], y + coords[1]))
-            dwg.add(text_element)
+        if(not(x == 25040.2 and y == -25040.2)):
+            coords = slf.adjust_coordinates_for_orientation_and_alignment(window[0], window[1], window[2])
+            if coords is None:
+                raise ValueError("Coords cannot be None. Please check the window value.")
+            
+            if window[2] in ["VTop", "VBottom"]:
+                dwg.add(dwg.text(text, insert=(x + (slf.flip) * coords[0], y + coords[1]), font_family="CMU Serif", font_size=size, text_anchor="middle"))
+            else:
+                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family="CMU Serif", font_size=size, text_anchor="end" if (((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "start")
+                text_element.rotate(-angle, center = (x + coords[0], y + coords[1]))
+                dwg.add(text_element)
 
     def draw_image_with_rotation(slf, dwg, href):
         x, y = slf.position
         image = svgwrite.image.Image(href=href, insert=(x, y))
 
-        if slf.orientation.startswith('M'):
+        if slf.flip == -1:
             # Espejado
             angle = int(slf.orientation[1:])
             transform = f"scale(-1, 1) translate({-2 * x}, 0) rotate({angle}, {x}, {y})"
@@ -84,75 +86,9 @@ class Component:
         image['transform'] = transform
         dwg.add(image)
 
-class Resistor(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/ress.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
 
-class Pot(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/pot.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
 
-class Capacitor(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/cap.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1] + 5, slf.windows.get(3, (24, 56, "Left")), slf.attributes.get("Value", slf.component_type))
 
-class Inductor(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/ind.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
-
-class OpAmp(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/OA.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-176, 32, "Left")), slf.attributes.get("Value", slf.component_type), "9px",  (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(123, (-176, 48, "Left")), slf.attributes.get("Value2", slf.component_type), "9px", (int(slf.orientation[1:]))%180)
-
-class TL082(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/TL082.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
-
-class Flag(Component):
-    def draw(slf, dwg):
-        if(slf.attributes.get("Value", slf.component_type) == "0"):
-            slf.draw_image_with_rotation(dwg, 'Skins/Default/GND.svg')
-        else:
-            slf.draw_image_with_rotation(dwg, 'Skins/Default/FLAG.svg')
-            place_text_according_to_cable(slf.position, slf.attributes.get("Value", slf.component_type), wires, dwg)
-
-class Voltage(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/voltage.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
-
-class NPN(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/NPN.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1] + 5, slf.windows.get(3, (56, 68, "Left")), slf.attributes.get("Value", " "))
-
-class PNP(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/PNP.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1] + 5, slf.windows.get(3, (56, 68, "Left")), slf.attributes.get("Value", " "))
-
-class Not(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/74HCU04 Not.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (16, 16, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (7, 87, "Left")), slf.attributes.get("Value", "74HCU04"), "11px",  (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(69, (7, 28, "Left")), slf.attributes.get("Value", "Vdd"), "10px",  (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(125, (7, 104, "Left")), slf.attributes.get("Value2", "GND"), "10px", (int(slf.orientation[1:]))%180)
 
 class Amp_Current(Component):
     def draw(slf, dwg):
@@ -169,17 +105,15 @@ class Amp_Transimpedance(Component):
 class Ampmeter(Component):
     def draw(slf, dwg): 
         slf.draw_image_with_rotation(dwg, 'Skins/Default/ampmeter.svg')
-        if (slf.orientation == "R0" or slf.orientation == "R180"):
-            offset = 7
-        else:
-            offset = 0
+        offset = offset_text(slf, 7, 0, -2, 0)
+
         slf.add_text(dwg, slf.position[0] + offset, slf.position[1] + offset, slf.windows.get(0, (-23, 14, "Left")), slf.attributes.get("InstName", ""), angle = 90)
 
 class Arrow(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
         offsetx = offset_text(slf, 0, 3, 0, 11)
-        offsety = offset_text(slf, 12)
+        offsety = offset_text(slf, 2, 0, 0, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(3, (21, -18, "Left")), slf.attributes.get("Value", "Ir"), angle = (int(slf.orientation[1:]))%180)
 
 class Arrow_curve(Component):
@@ -189,10 +123,34 @@ class Arrow_curve(Component):
         offsety = offset_text(slf, -1, 15, -7, -4)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(3, (63, 55, "Left")), slf.attributes.get("Value", "Vr"))
 
+class Bi(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/bi.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+
+class Bv(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/bv.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+
 class Bypass(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/bypass.svg')
-       
+
+class Capacitor(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/cap.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1] + 5, slf.windows.get(3, (24, 56, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class Cell(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/cell.svg')
+        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] + 6, slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] - 8, slf.windows.get(3, (24, 56, "Left")), slf.attributes.get("Value", slf.component_type))
+
 class Current(Component):
     def draw(slf, dwg):
 
@@ -202,17 +160,68 @@ class Current(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1] - offset - 3, slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0], slf.position[1] - offset, slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
 
-class Cell(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/cell.svg')
-        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] + 6, slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0] - 12, slf.position[1] - 8, slf.windows.get(3, (24, 56, "Left")), slf.attributes.get("Value", slf.component_type))
-
 class Diode(Component):
     def draw(slf, dwg):
+        offsety = offset_text(slf, 0, 0, 0, 3)
         slf.draw_image_with_rotation(dwg, 'Skins/Default/diode.svg')
-        slf.add_text(dwg, slf.position[0] + 7, slf.position[1] + 4, slf.windows.get(0, (24, 0, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0] + 7, slf.position[1] - 4, slf.windows.get(3, (24, 64, "Left")), slf.attributes.get("Value", slf.component_type))
+        slf.add_text(dwg, slf.position[0] + 1, slf.position[1] + 3, slf.windows.get(0, (24, 0, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0] + 3, slf.position[1] - 4 + offsety, slf.windows.get(3, (24, 64, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class E(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/e.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+
+class E2(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/e2.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+
+class Flag(Component):
+    def draw(slf, dwg):
+        if(slf.attributes.get("Value", slf.component_type) == "0"):
+
+            direction = get_cable_directions(slf.position, wires)
+            if direction == "up":
+                slf.orientation = "R0"
+            elif direction == "down":
+                slf.orientation = "R180"
+            elif direction == "left":
+                slf.orientation = "R270"
+            elif direction == "right":
+                slf.orientation = "R90"
+
+            slf.draw_image_with_rotation(dwg, 'Skins/Default/GND.svg')
+        else:
+            slf.draw_image_with_rotation(dwg, 'Skins/Default/FLAG.svg')
+            place_text_according_to_cable(slf.position, slf.attributes.get("Value", slf.component_type), wires, dwg)
+
+class G(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/g.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+
+class G2(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/g2.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+
+class Inductor(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/ind.svg')
+        offsetx = offset_text(slf, 0, 0, -40)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class LTap(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/L_Tap.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (40, 58, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(123, (40, 134, "Left")), slf.attributes.get("Value2", "n=3"), angle = (int(slf.orientation[1:]))%180)
 
 class LM311(Component):
     def draw(slf, dwg):
@@ -221,10 +230,106 @@ class LM311(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-112, 7, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(69, (-89, 82, "Left")),slf.attributes.get("Value", "O_GND"), "8px", angle = (int(slf.orientation[1:]))%180)
 
+class NJFet(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/njf.svg')
+        offsetx = offset_text(slf, -25, -41, -63, -35)
+        offsety = offset_text(slf, 10, 34, 51, 40)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
+
+class NMOS(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/nmos.svg')
+        offsetx = offset_text(slf, -30, -41, -63, -35)
+        offsety = offset_text(slf, 20, 34, 51, 40)
+        slf.add_text(dwg, slf.position[0] + offsety, slf.position[1] + offsetx, slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
+
+class NPN(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/npn.svg')
+        offsetx = offset_text(slf, -30, -41, -63, -35)
+        offsety = offset_text(slf, 20, 34, 51, 40)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
+
+class Not(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/74HCU04 Not.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (16, 16, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (7, 87, "Left")), slf.attributes.get("Value", "74HCU04"), "11px",  (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(69, (7, 28, "Left")), slf.attributes.get("Value", "Vdd"), "10px",  (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(125, (7, 104, "Left")), slf.attributes.get("Value2", "GND"), "10px", (int(slf.orientation[1:]))%180)
+
+class OpAmp(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Ideal.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-176, 32, "Left")), slf.attributes.get("Value", slf.component_type), "9px",  (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(123, (-176, 48, "Left")), slf.attributes.get("Value2", slf.component_type), "9px", (int(slf.orientation[1:]))%180)
+
+class PJFet(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/pjf.svg')
+        offsetx = offset_text(slf, -30, -41, -63, -35)
+        offsety = offset_text(slf, 20, 34, 51, 40)
+        slf.add_text(dwg, slf.position[0] + offsety, slf.position[1] + offsetx, slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
+
+class PMOS(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/pmos.svg')
+        offsetx = offset_text(slf, -30, -41, -63, -35)
+        offsety = offset_text(slf, 20, 34, 51, 40)
+        slf.add_text(dwg, slf.position[0] + offsety, slf.position[1] + offsetx, slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
+
+class PNP(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/PNP.svg')
+        offsetx = offset_text(slf, -30, -41, -63, -35)
+        offsety = offset_text(slf, 20, 34, 51, 40)
+        slf.add_text(dwg, slf.position[0] + offsety, slf.position[1] + offsetx, slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
+
+class Pot(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/pot.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class Resistor(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/ress.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+
+class Res60(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/res_60.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+
+class Schottky(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/schottky.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1] + 5, slf.windows.get(3, (56, 68, "Left")), slf.attributes.get("Value", " "))
+
 class Switch(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/switch.svg')
-       
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/switch.svg')        
+
+class SwitchSch(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/switch_sch.svg')
+        
+class TL082(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/TL082.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+
+class Voltage(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/voltage.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+
 class Zener(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/zener.svg')
@@ -275,22 +380,34 @@ def parse_asc_file(filename):
 
                 x, y = map(int, coords_and_orientation[:2])
                 orientation = coords_and_orientation[2] if len(coords_and_orientation) > 2 else "R0"
+
+                if orientation.startswith("M"):
+                    orientation = 'R' + orientation[1:]
+                    flip = -1
+                else:
+                    flip = 1
                 
-                current_component = {"type": component_name, "position": (x, y), "orientation": orientation, "attributes": {}, "windows": {}}
+                current_component = {"type": component_name, "position": (x, y), "orientation": orientation, "flip": flip, "attributes": {}, "windows": {}}
             elif parts[0] == "SYMATTR" and current_component:
                 attribute_name = parts[1]
                 attribute_value = " ".join(parts[2:])
                 current_component["attributes"][attribute_name] = attribute_value
             elif parts[0] == "WINDOW" and current_component:
+                if "Invisible" in parts:
+                    x = 25040.2
+                    y = -25040.2
+                else:
+                    x, y = map(int, parts[2:4])
+
                 window_index = int(parts[1])
-                x, y = map(int, parts[2:4])
                 alignment = parts[4]
                 current_component["windows"][window_index] = (x, y, alignment)
             elif parts[0] == "FLAG":
                 x, y = map(int, parts[1:3])
                 component_type = "flag"
                 orientation = "R0"
-                flag = {"type": component_type, "position": (x, y), "orientation": orientation, "attributes": {}, "windows": {}}
+                flip = 1
+                flag = {"type": component_type, "position": (x, y), "orientation": orientation, "flip": flip,"attributes": {}, "windows": {}}
                 flag["attributes"]["Value"] = parts[3]
                 components.append(flag)
             elif parts[0] == 'SHEET':
@@ -301,7 +418,8 @@ def parse_asc_file(filename):
 
     return wires, components, windowsize
 
-def get_cable_direction(pin_position, cables):
+def get_cable_directions(pin_position, cables):
+    directions = []
     for (start, end) in cables:
         if pin_position == start:
             dx = end[0] - start[0]
@@ -312,32 +430,51 @@ def get_cable_direction(pin_position, cables):
         else:
             continue
         
-        if dx > 0:
-            return "right"
-        elif dx < 0:
-            return "left"
-        elif dy > 0:
-            return "down"
-        elif dy < 0:
-            return "up"
-    return None
+        if dx > 0 and "right" not in directions:
+            directions.append("right")
+        elif dx < 0 and "left" not in directions:
+            directions.append("left")
+        if dy > 0 and "down" not in directions:
+            directions.append("down")
+        elif dy < 0 and "up" not in directions:
+            directions.append("up")
+    
+    if directions:
+        return ", ".join(directions)
+    else:
+        return None
 
 def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
-    direction = get_cable_direction(pin_position, cables)
+    directions = get_cable_directions(pin_position, cables)
     
-    if direction == "up":
-        text_position = (pin_position[0], pin_position[1] + offset)
-    elif direction == "down":
+    if "up" in directions:
+        if "right" in directions:
+            text_position = (pin_position[0] - int(offset/2), pin_position[1] + 5)
+            dwg.add(dwg.text(text, insert=text_position, font_family="CMU Serif", font_size="20px", text_anchor="end"))
+        else:
+            text_position = (pin_position[0], pin_position[1] + offset)
+            dwg.add(dwg.text(text, insert=text_position, font_family="CMU Serif", font_size="20px", text_anchor="middle"))
+
+    elif "down" in directions:
         text_position = (pin_position[0], pin_position[1] - offset + 10)
-    elif direction == "left":
-        text_position = (pin_position[0] + offset, pin_position[1] + 5)
-    elif direction == "right":
-        text_position = (pin_position[0] - offset, pin_position[1] + 5)
+        dwg.add(dwg.text(text, insert=text_position, font_family="CMU Serif", font_size="20px", text_anchor="middle"))
+
+    elif "left" in directions:
+        if "right" in directions:
+            text_position = (pin_position[0], pin_position[1] - offset + 10)
+            dwg.add(dwg.text(text, insert=text_position, font_family="CMU Serif", font_size="20px", text_anchor="middle"))
+        else:
+            text_position = (pin_position[0] + int(offset/2), pin_position[1] + 5)
+            dwg.add(dwg.text(text, insert=text_position, font_family="CMU Serif", font_size="20px", text_anchor="start"))
+
+    elif "right" in directions:
+        text_position = (pin_position[0] - int(offset/2), pin_position[1] + 5)
+        dwg.add(dwg.text(text, insert=text_position, font_family="CMU Serif", font_size="20px", text_anchor="end"))
+
     else:
         text_position = pin_position
     
-    dwg.add(dwg.text(text, insert=text_position, font_family="CMU Serif", font_size="20px", text_anchor="middle"))
-
+    
 def create_circuit_svg(filename, wires, components):
     dwg = svgwrite.Drawing(filename, size=windowsize, profile='tiny')
     nodes = {}
@@ -354,7 +491,7 @@ def create_circuit_svg(filename, wires, components):
     # Dibujar nodos si se intersectan 3 o más cables
     for point, count in nodes.items():
         if count >= 3:
-            dwg.add(dwg.circle(center=point, r=3, fill='black'))
+            dwg.add(dwg.circle(center=point, r=4, fill='black'))
 
     # Dibujar componentes
     component_objects = {
@@ -364,12 +501,26 @@ def create_circuit_svg(filename, wires, components):
         "ampmeter": Ampmeter, 
         "arrow": Arrow,
         "arrow_curve": Arrow_curve,
+        "bv": Bv,
+        "bi": Bi,
         "bypass": Bypass,
         "current": Current,
         "cell": Cell,
         "diode": Diode,
+        "e": E,
+        "e2": E2,
+        "g": G,
+        "g2": G2,
+        "L_Tap": LTap,
         "LM311": LM311,
+        "njf": NJFet,
+        "nmos": NMOS,
+        "pjf": PJFet,
+        "pmos": PMOS,
+        "res_60": Res60,
+        "schottky": Schottky,
         "switch": Switch,
+        "switch_sch": SwitchSch,
         "zener": Zener,
         "res": Resistor,
         "cap": Capacitor,
@@ -390,6 +541,7 @@ def create_circuit_svg(filename, wires, components):
                 component_type,
                 component["position"],
                 component["orientation"],
+                component["flip"],
                 component["attributes"],
                 component["windows"]
             )
@@ -430,7 +582,7 @@ def svg_to_pdf(svg_filename, pdf_filename):
 
 
 # Ejemplo de uso
-asc_filename = 'Cables.asc'
+asc_filename = 'Guia1.asc'
 modified_svg_filename = 'ModifiedOutput.svg'
 svg_filename = 'Output.svg'
 pdf_filename = 'Output.pdf'
