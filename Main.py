@@ -149,9 +149,10 @@ class PNP(Component):
 class Not(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/74HCU04 Not.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-176, 32, "Left")), slf.attributes.get("Value", slf.component_type), "9px",  (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(123, (-176, 48, "Left")), slf.attributes.get("Value2", slf.component_type), "9px", (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (16, 16, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (7, 87, "Left")), slf.attributes.get("Value", "74HCU04"), "11px",  (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(69, (7, 28, "Left")), slf.attributes.get("Value", "Vdd"), "10px",  (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(125, (7, 104, "Left")), slf.attributes.get("Value2", "GND"), "10px", (int(slf.orientation[1:]))%180)
 
 class Amp_Current(Component):
     def draw(slf, dwg):
@@ -177,14 +178,16 @@ class Ampmeter(Component):
 class Arrow(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+        offsetx = offset_text(slf, 0, 3, 0, 11)
+        offsety = offset_text(slf, 12)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(3, (21, -18, "Left")), slf.attributes.get("Value", "Ir"), angle = (int(slf.orientation[1:]))%180)
 
 class Arrow_curve(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_curve.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", slf.component_type))
+        offsetx = offset_text(slf, 3, 7, -3, -9)
+        offsety = offset_text(slf, -1, 15, -7, -4)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(3, (63, 55, "Left")), slf.attributes.get("Value", "Vr"))
 
 class Bypass(Component):
     def draw(slf, dwg):
@@ -193,10 +196,7 @@ class Bypass(Component):
 class Current(Component):
     def draw(slf, dwg):
 
-        if (slf.orientation == "R0" or slf.orientation == "R180"):
-            offset = 15
-        else:
-            offset = 0
+        offset = offset_text(slf, 15, 0, 15, 0)
     
         slf.draw_image_with_rotation(dwg, 'Skins/Default/current.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1] - offset - 3, slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
@@ -217,9 +217,9 @@ class Diode(Component):
 class LM311(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/LM311.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-176, 32, "Left")), slf.attributes.get("Value", slf.component_type), "9px",  (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(123, (-176, 48, "Left")), slf.attributes.get("Value2", slf.component_type), "9px", (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (-112, -16, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-112, 7, "Left")), slf.attributes.get("Value", slf.component_type), angle = (int(slf.orientation[1:]))%180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(69, (-89, 82, "Left")),slf.attributes.get("Value", "O_GND"), "8px", angle = (int(slf.orientation[1:]))%180)
 
 class Switch(Component):
     def draw(slf, dwg):
@@ -231,6 +231,17 @@ class Zener(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (24, 0, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (24, 64, "Left")), slf.attributes.get("Value", slf.component_type))
 
+def offset_text (slf, off0 = 0, off90  = 0, off180  = 0, off270  = 0):
+    if (slf.orientation == "R0"):
+        return  off0
+    elif(slf.orientation == "R90"):
+        return off90
+    elif(slf.orientation == "R180"):
+        return off180
+    elif(slf.orientation == "R270"):
+        return off270
+    else:
+        return 0
 
 
 def parse_asc_file(filename):
