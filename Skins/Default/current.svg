@@ -3,21 +3,21 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 32 80" style="enable-background:new 0 0 32 80;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st1{stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st2{fill:none;stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st3{stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st0{stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st1{fill:none;stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st2{stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st3{fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 </style>
-<line class="st0" x1="0" y1="0" x2="0" y2="11"/>
-<line class="st0" x1="0" y1="69" x2="0" y2="80"/>
-<circle class="st0" cx="0" cy="40" r="29"/>
 <g>
 	<g>
-		<polygon class="st1" points="-3.7,43.2 0,57 3.7,43.2 		"/>
+		<polygon class="st0" points="-3.7,43.2 0,57 3.7,43.2 		"/>
 	</g>
 	<g>
-		<line class="st2" x1="0" y1="23.7" x2="0" y2="43.2"/>
-		<rect x="-0.5" y="23.2" class="st3" width="1" height="20.5"/>
+		<line class="st1" x1="0" y1="23.7" x2="0" y2="43.2"/>
+		<rect x="-0.5" y="23.2" class="st2" width="1" height="20.5"/>
 	</g>
 </g>
+<line class="st3" x1="0.5" y1="0" x2="0.5" y2="8"/>
+<line class="st3" x1="0.5" y1="72" x2="0.5" y2="80"/>
+<circle class="st3" cx="0.5" cy="40" r="32"/>
 </svg>
