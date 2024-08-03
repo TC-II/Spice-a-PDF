@@ -291,8 +291,10 @@ class OpAmp(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Ideal.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-176, 32, "Left")), slf.attributes.get("Value", " "), "9px",  (int(slf.orientation[1:]))%180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(123, (-176, 48, "Left")), slf.attributes.get("Value2", " "), "9px", (int(slf.orientation[1:]))%180)
+        if(len(slf.attributes.get("Value", " ")) > 2):
+            slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-176, 32, "Left")), slf.attributes.get("Value", " "), "9px",  (int(slf.orientation[1:]))%180)
+        if(len(slf.attributes.get("Value2", " ")) > 2):
+            slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(123, (-176, 48, "Left")), slf.attributes.get("Value2", " "), "9px", (int(slf.orientation[1:]))%180)
 
 class PJFet(Component):
     def draw(slf, dwg):
