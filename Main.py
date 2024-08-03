@@ -59,7 +59,7 @@ class Component:
             return y, -x
 
     def add_text(slf, dwg, x, y, window, text, size="20px", angle=0):
-        if (not (x == 25040.2 and y == -25040.2)):
+        if (not (x == 25040.2 and y == -25040.2)) and text != '""':
             coords = slf.adjust_coordinates_for_orientation_and_alignment(
                 window[0], window[1], window[2])
             if coords is None:
