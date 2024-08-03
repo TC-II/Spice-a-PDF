@@ -141,10 +141,10 @@ class Arrow_curve(Component):
 class Arrow_Z(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_Z.svg')
-        offsetx = offset_text(slf, 3, 7, -3, -9, slf.flip)
-        offsety = offset_text(slf, -1, 15, -7, -4)
+        offsetx = offset_text(slf, -3, 7, 4, -6, slf.flip)
+        offsety = offset_text(slf, 10, 10, 3, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
-                     slf.windows.get(3, (63, 55, "Left")), slf.attributes.get("Value", "Vr"))
+                     slf.windows.get(3, (21, -22, "Left")), slf.attributes.get("Value", "Zi"))
 
 
 class Bi(Component):
