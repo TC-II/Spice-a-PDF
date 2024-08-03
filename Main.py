@@ -138,6 +138,14 @@ class Arrow_curve(Component):
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
                      slf.windows.get(3, (63, 55, "Left")), slf.attributes.get("Value", "Vr"))
 
+class Arrow_Z(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_curve.svg')
+        offsetx = offset_text(slf, 3, 7, -3, -9, slf.flip)
+        offsety = offset_text(slf, -1, 15, -7, -4)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
+                     slf.windows.get(3, (63, 55, "Left")), slf.attributes.get("Value", "Vr"))
+
 
 class Bi(Component):
     def draw(slf, dwg):
@@ -732,6 +740,7 @@ def create_circuit_svg(filename, wires, components):
         "ampmeter": Ampmeter,
         "arrow": Arrow,
         "arrow_curve": Arrow_curve,
+        "arrow_Z": Arrow_Z,
         "bv": Bv,
         "bi": Bi,
         "bypass": Bypass,
