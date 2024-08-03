@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.8.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 96 64" style="enable-background:new 0 0 96 64;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st1{font-family:'CMUSerif-Roman';}
+	.st2{font-size:20px;}
+</style>
+<rect x="-96" y="-42" class="st0" width="192" height="106"/>
+<text transform="matrix(1 0 0 1 -15.2207 57.648)" class="st1 st2">Ref</text>
+<text transform="matrix(1 0 0 1 -90.3309 5.4889)" class="st1 st2">In</text>
+<text transform="matrix(1 0 0 1 56.9658 5.4889)" class="st1 st2">Out</text>
+</svg>

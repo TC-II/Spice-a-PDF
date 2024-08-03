@@ -413,7 +413,7 @@ class Pot(Component):
 
 class Resistor(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/ress.svg')
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/res.svg')
         offsety = offset_text(slf, 0, 0, 10)
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
