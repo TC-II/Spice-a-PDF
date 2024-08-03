@@ -95,6 +95,8 @@ class Component:
 
 class Amp_Current(Component):
     def draw(slf, dwg):
+
+        super.draw(dwg)
         slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Current.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
@@ -545,7 +547,6 @@ def parse_asc_file(filename):
     minx = 10000
     miny = 10000
     found_rectangle = False
-    sheet_line = []
 
     with open(filename, 'r') as file:
         for line in file:
@@ -560,8 +561,6 @@ def parse_asc_file(filename):
                 miny = min([y1, y2, miny])
                 if (dx * dy) > (max_rectangle_size[0] * max_rectangle_size[1]):
                     max_rectangle_size = (dx, dy)
-            elif parts[0] == 'SHEET':
-                sheet_line = parts
 
         if not found_rectangle:
             dx = 10000
