@@ -11,7 +11,8 @@ import reportlab.rl_config
 reportlab.rl_config.warnOnMissingFontGlyphs = 0
 
 font_path = os.path.join('fonts', 'cmunrm.ttf')
-
+minx = 0
+miny = 0
 
 class Component:
     def __init__(slf, component_type, position, orientation, flip, attributes, windows):
@@ -417,8 +418,24 @@ def parse_asc_file(filename):
     current_component = None
     windowsize = None
     max_rectangle_size = (0, 0)  # Tamaño inicial del rectángulo más grande encontrado
+    global minx
+    global miny
+    minx = 10000
+    miny = 10000
 
     with open(filename, 'r') as file:
+        for line in file:
+            parts = line.split()
+            if parts[0] == 'RECTANGLE':
+                x1, y1 = map(int, parts[2:4])
+                x2, y2 = map(int, parts[4:6])
+                dx = abs(x1 - x2)
+                dy = abs(y1 - y2)
+                minx = min([x1, x2, minx])
+                miny = min([y1, y2, miny])
+                if (dx * dy) > (max_rectangle_size[0] * max_rectangle_size[1]):
+                    max_rectangle_size = (dx, dy)
+        file.seek(0)
         for line in file:
             parts = line.split()
             if parts[0] == "WIRE":
@@ -473,13 +490,6 @@ def parse_asc_file(filename):
                 flag = {"type": component_type, "position": (x, y), "orientation": orientation, "flip": flip,"attributes": {}, "windows": {}}
                 flag["attributes"]["Value"] = parts[3]
                 components.append(flag)
-            elif parts[0] == 'SHEET':
-                windowsize = (parts[2], parts[3])
-            elif parts[0] == 'RECTANGLE':
-                x, y = map(int, parts[2:4])
-
-                if (x * y) > (max_rectangle_size[0] * max_rectangle_size[1]):
-                    max_rectangle_size = (x,y)
 
         if current_component:
             components.append(current_component)
@@ -547,8 +557,9 @@ def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
     else:
         text_position = pin_position
     
-    
 def create_circuit_svg(filename, wires, components):
+    global minx
+    global miny
     dwg = svgwrite.Drawing(filename, size=windowsize, profile='tiny')
     nodes = {}
 
@@ -627,6 +638,7 @@ def create_circuit_svg(filename, wires, components):
             )
             component_obj.draw(dwg)
 
+    dwg.viewbox(minx, miny, windowsize[0], windowsize[1])
     dwg.save()
 
 def modify_svg_font(svg_filename, output_svg_filename, font_name):
@@ -652,7 +664,7 @@ def svg_to_pdf(svg_filename, pdf_filename):
     
     # Crear el canvas PDF
     c = canvas.Canvas(pdf_filename, pagesize= windowsize)
-    
+
     # Dibujar el SVG en el PDF
     renderPDF.draw(drawing, c, 0, 0)
     
@@ -684,6 +696,7 @@ for root, dirs, files in os.walk(input_dir):
                 asc_filename = os.path.join(input_folder, file_name)
                 svg_filename = os.path.join(root_dir, file_name.replace('.asc', '.svg'))
                 modified_svg_filename = os.path.join(root_dir, file_name.replace('.asc', '_modified.svg'))
+                fitted_svg_filename = os.path.join(root_dir, file_name.replace('.asc', '_fitted.svg'))
                 pdf_filename = os.path.join(output_folder, file_name.replace('.asc', '.pdf'))
                 
                 # Procesa el archivo .asc
