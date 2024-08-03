@@ -95,8 +95,6 @@ class Component:
 
 class Amp_Current(Component):
     def draw(slf, dwg):
-
-        super.draw(dwg)
         slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Current.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
