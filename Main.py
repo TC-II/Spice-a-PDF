@@ -544,11 +544,14 @@ def parse_asc_file(filename):
     global miny
     minx = 10000
     miny = 10000
+    found_rectangle = False
+    sheet_line = []
 
     with open(filename, 'r') as file:
         for line in file:
             parts = line.split()
             if parts[0] == 'RECTANGLE':
+                found_rectangle = True
                 x1, y1 = map(int, parts[2:4])
                 x2, y2 = map(int, parts[4:6])
                 dx = abs(x1 - x2)
@@ -557,6 +560,17 @@ def parse_asc_file(filename):
                 miny = min([y1, y2, miny])
                 if (dx * dy) > (max_rectangle_size[0] * max_rectangle_size[1]):
                     max_rectangle_size = (dx, dy)
+            elif parts[0] == 'SHEET':
+                sheet_line = parts
+        if not found_rectangle:
+            x1, y1 = map(int, sheet_line[2:4])
+            x2, y2 = map(int, sheet_line[4:6])
+            dx = abs(x1 - x2)
+            dy = abs(y1 - y2)
+            minx = min([x1, x2, minx])
+            miny = min([y1, y2, miny])
+            if (dx * dy) > (max_rectangle_size[0] * max_rectangle_size[1]):
+                max_rectangle_size = (dx, dy)
         file.seek(0)
         for line in file:
             parts = line.split()

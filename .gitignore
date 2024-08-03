@@ -1,0 +1,3 @@
+* ignore all .asc files
+**.asc
+**.pdf
