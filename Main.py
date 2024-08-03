@@ -127,7 +127,7 @@ class Arrow(Component):
         offsetx = offset_text(slf, 0, 3, 0, 11, slf.flip)
         offsety = offset_text(slf, 2, 0, 0, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(
-            3, (21, -18, "Left")), slf.attributes.get("Value", "Ir"), angle=(int(slf.orientation[1:])) % 180)
+            3, (21, -18, "Left")), slf.attributes.get("Value", "Ir"))
 
 
 class Arrow_curve(Component):
