@@ -105,21 +105,21 @@ class Amp_Transimpedance(Component):
 class Ampmeter(Component):
     def draw(slf, dwg): 
         slf.draw_image_with_rotation(dwg, 'Skins/Default/ampmeter.svg')
-        offset = offset_text(slf, 7, 0, -2, 0)
+        offset = offset_text(slf, 7, 0, -2, 0, slf.flip)
 
         slf.add_text(dwg, slf.position[0] + offset, slf.position[1] + offset, slf.windows.get(0, (-23, 14, "Left")), slf.attributes.get("InstName", ""), angle = 90)
 
 class Arrow(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
-        offsetx = offset_text(slf, 0, 3, 0, 11)
+        offsetx = offset_text(slf, 0, 3, 0, 11, slf.flip)
         offsety = offset_text(slf, 2, 0, 0, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(3, (21, -18, "Left")), slf.attributes.get("Value", "Ir"), angle = (int(slf.orientation[1:]))%180)
 
 class Arrow_curve(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_curve.svg')
-        offsetx = offset_text(slf, 3, 7, -3, -9)
+        offsetx = offset_text(slf, 3, 7, -3, -9, slf.flip)
         offsety = offset_text(slf, -1, 15, -7, -4)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(3, (63, 55, "Left")), slf.attributes.get("Value", "Vr"))
 
@@ -152,7 +152,7 @@ class Capacitor(Component):
 class Cell(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/cell.svg')
-        offsetx = offset_text(slf, -5, 0, -2)
+        offsetx = offset_text(slf, -5, 0, -2, slf.flip)
         offsety = offset_text(slf, 0, 0, 9)
 
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + 6 + offsety, slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
@@ -174,6 +174,14 @@ class Diode(Component):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/diode.svg')
         slf.add_text(dwg, slf.position[0] + 1, slf.position[1] + 1, slf.windows.get(0, (24, 0, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0] + 3, slf.position[1] - 4 + offsety, slf.windows.get(3, (24, 64, "Left")), slf.attributes.get("Value", " "))
+
+class Diode45(Component):
+    def draw(slf, dwg):
+        offsetx = offset_text(slf, -30, 18, -5, 35, slf.flip)
+        offsety = offset_text(slf, -8, -30, -40, -15)
+       
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/diode_45.svg')
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(0, (24, 0, "Left")), slf.attributes.get("InstName", ""))
 
 class E(Component):
     def draw(slf, dwg):
@@ -218,6 +226,11 @@ class G2(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", " "), angle = (int(slf.orientation[1:]))%180)
 
+class GainBlock(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/Gain_Block.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-158, 48, "Left")), slf.attributes.get("Value", "K = 10"))
+
 class Inductor(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/ind.svg')
@@ -237,6 +250,13 @@ class LM311(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (-112, -16, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (-112, 7, "Left")), slf.attributes.get("Value", " "), angle = (int(slf.orientation[1:]))%180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(69, (-89, 82, "Left")),slf.attributes.get("Value", "O_GND"), "8px", angle = (int(slf.orientation[1:]))%180)
+
+class LM7805(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/7805.svg')
+        offsetx = offset_text(slf, -7, -6, 7, 6, slf.flip)
+        offsety = offset_text(slf, 15, 0, -11, 2)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
 
 class NJFet(Component):
     def draw(slf, dwg):
@@ -296,7 +316,7 @@ class PNP(Component):
 class Pot(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/pot.svg')
-        offsetx = offset_text(slf, 0, 0, 0, 7)
+        offsetx = offset_text(slf, 0, 0, 0, 7, slf.flip)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle = (int(slf.orientation[1:]))%180)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", " "), angle = (int(slf.orientation[1:]))%180)
 
@@ -315,13 +335,34 @@ class Res60(Component):
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", " "))
 
+class ResPipe(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/res_pipe.svg')
+        offsety = offset_text(slf, 7, 7)
+        slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", " "))
+
 class Schottky(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/schottky.svg')
-        offsetx = offset_text(slf, -10, 0, -17)        
+        offsetx = offset_text(slf, -10, 0, -17, slf.flip)        
         offsety = offset_text(slf, 0, 0, 37)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(3, (56, 68, "Left")), slf.attributes.get("Value", " "))
+
+class Signal(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/signal.svg')
+        offsetx = offset_text(slf, 0, 0, -8, 0, slf.flip)        
+        offsety = offset_text(slf, 0, 0, 20, 0)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", " "))
+
+class Supply(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/supply.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", " "))
 
 class Switch(Component):
     def draw(slf, dwg):
@@ -341,6 +382,13 @@ class Voltage(Component):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/voltage.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", " "))
+
+class Xtal(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/xtal_.svg')     
+        offsety = offset_text(slf, 0, 0, 23, 0)
+        slf.add_text(dwg, slf.position[0], slf.position[1] - 8 + offsety, slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0], slf.position[1] + 5 + offsety, slf.windows.get(3, (24, 56, "Left")), slf.attributes.get("Value", " "))
 
 class Zener(Component):
     def draw(slf, dwg):
@@ -368,6 +416,7 @@ def parse_asc_file(filename):
     components = []
     current_component = None
     windowsize = None
+    max_rectangle_size = (0, 0)  # Tamaño inicial del rectángulo más grande encontrado
 
     with open(filename, 'r') as file:
         for line in file:
@@ -426,11 +475,21 @@ def parse_asc_file(filename):
                 components.append(flag)
             elif parts[0] == 'SHEET':
                 windowsize = (parts[2], parts[3])
+            elif parts[0] == 'RECTANGLE':
+                x, y = map(int, parts[2:4])
+
+                if (x * y) > (max_rectangle_size[0] * max_rectangle_size[1]):
+                    max_rectangle_size = (x,y)
 
         if current_component:
             components.append(current_component)
 
+    # Actualiza el tamaño de la ventana si se encontraron rectángulos
+    if max_rectangle_size != (0, 0):
+        windowsize = max_rectangle_size
+
     return wires, components, windowsize
+
 
 def get_cable_directions(pin_position, cables):
     directions = []
@@ -495,7 +554,7 @@ def create_circuit_svg(filename, wires, components):
 
     # Dibujar cables y detectar nodos
     for (start, end) in wires:
-        dwg.add(dwg.line(start=start, end=end, stroke=svgwrite.rgb(0, 0, 0, '%'), stroke_width=1.5))
+        dwg.add(dwg.line(start=start, end=end, stroke=svgwrite.rgb(0, 0, 0, '%'), stroke_linecap= "round" ,stroke_width=1.5 ))
         for point in [start, end]:
             if point in nodes:
                 nodes[point] += 1
@@ -509,6 +568,7 @@ def create_circuit_svg(filename, wires, components):
 
     # Dibujar componentes
     component_objects = {
+        "7805": LM7805,
         "Not": Not,     
         "Amp_Current": Amp_Current,
         "Amp_Transimpedance": Amp_Transimpedance,
@@ -518,34 +578,40 @@ def create_circuit_svg(filename, wires, components):
         "bv": Bv,
         "bi": Bi,
         "bypass": Bypass,
+        "cap": Capacitor,
         "current": Current,
         "cell": Cell,
         "diode": Diode,
+        "diode_45": Diode45,
         "e": E,
         "e2": E2,
+        "flag": Flag,
         "g": G,
         "g2": G2,
+        "Gain_Block": GainBlock,
+        "ind": Inductor,
         "L_Tap": LTap,
         "LM311": LM311,
         "njf": NJFet,
         "nmos": NMOS,
+        "npn": NPN,
+        "OA_Ideal": OpAmp,
         "pjf": PJFet,
         "pmos": PMOS,
+        "pnp": PNP,
+        "pot": Pot,
+        "res": Resistor,        
         "res_60": Res60,
+        "res_pipe": ResPipe,
         "schottky": Schottky,
+        "signal": Signal,
+        "supply": Supply,
         "switch": Switch,
         "switch_sch": SwitchSch,
-        "zener": Zener,
-        "res": Resistor,
-        "cap": Capacitor,
-        "OA_Ideal": OpAmp,
-        "flag": Flag,
-        "npn": NPN,
-        "pnp": PNP,
-        "ind": Inductor,
-        "pot": Pot,
         "TL082": TL082,
-        "voltage": Voltage
+        "voltage": Voltage,
+        "xtal": Xtal,
+        "zener": Zener       
     }
 
     for component in components:
@@ -596,16 +662,40 @@ def svg_to_pdf(svg_filename, pdf_filename):
 
 
 # Ejemplo de uso
-asc_filename = 'Full.asc'
-modified_svg_filename = 'ModifiedOutput.svg'
-svg_filename = 'Output.svg'
-pdf_filename = 'Output.pdf'
 
-wires, components, windowsize = parse_asc_file(asc_filename)
+# Directorios de entrada y salida
+input_dir = 'Esquemáticos'
+output_dir = 'PDFs'
+root_dir = os.getcwd()  # Directorio raíz del programa
 
-create_circuit_svg(svg_filename, wires, components)
+# Recorre todas las carpetas en el directorio de entrada
+for root, dirs, files in os.walk(input_dir):
+    for dir_name in dirs:
+        input_folder = os.path.join(root, dir_name)
+        output_folder = os.path.join(output_dir, dir_name)
+        
+        # Crea la carpeta de salida si no existe
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+        
+        # Recorre todos los archivos .asc en la carpeta actual
+        for file_name in os.listdir(input_folder):
+            if file_name.endswith('.asc'):
+                asc_filename = os.path.join(input_folder, file_name)
+                svg_filename = os.path.join(root_dir, file_name.replace('.asc', '.svg'))
+                modified_svg_filename = os.path.join(root_dir, file_name.replace('.asc', '_modified.svg'))
+                pdf_filename = os.path.join(output_folder, file_name.replace('.asc', '.pdf'))
+                
+                # Procesa el archivo .asc
+                wires, components, windowsize = parse_asc_file(asc_filename)
+                create_circuit_svg(svg_filename, wires, components)
+                modify_svg_font(svg_filename, modified_svg_filename, 'CMU_Serif')
+                svg_to_pdf(modified_svg_filename, pdf_filename)
+                
+                # Elimina los archivos SVG generados
+                if os.path.exists(svg_filename):
+                    os.remove(svg_filename)
+                if os.path.exists(modified_svg_filename):
+                    os.remove(modified_svg_filename)
 
-# Modifica el SVG para usar CMU Serif
-modify_svg_font(svg_filename, modified_svg_filename, 'CMU_Serif')
-
-svg_to_pdf(modified_svg_filename, pdf_filename)
+print("Proceso completado.")
