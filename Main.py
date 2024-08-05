@@ -138,6 +138,7 @@ class Arrow_curve(Component):
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
                      slf.windows.get(3, (63, 55, "Left")), slf.attributes.get("Value", "Vr"))
 
+
 class Arrow_Z(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_Z.svg')
@@ -180,7 +181,7 @@ class Capacitor(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(
             0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0], slf.position[1] + 5, slf.windows.get(
-            3, (24, 56, "Left")), slf.attributes.get("Value", " "))
+            3, (24, 56, "Left")), slf.attributes.get("Value", "F"))
 
 
 class Cell(Component):
@@ -375,12 +376,10 @@ class OpAmp(Component):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Ideal.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
-        if (len(slf.attributes.get("Value", " ")) > 2):
-            slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
-                3, (-176, 32, "Left")), slf.attributes.get("Value", " "), "9px",  (int(slf.orientation[1:])) % 180)
-        if (len(slf.attributes.get("Value2", " ")) > 2):
-            slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
-                123, (-176, 48, "Left")), slf.attributes.get("Value2", " "), "9px", (int(slf.orientation[1:])) % 180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            3, (-176, 32, "Left")), slf.attributes.get("Value", " "), "9px",  (int(slf.orientation[1:])) % 180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            123, (-176, 48, "Left")), slf.attributes.get("Value2", " "), "9px", (int(slf.orientation[1:])) % 180)
 
 
 class PJFet(Component):
@@ -426,7 +425,7 @@ class Resistor(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
-            3, (36, 76, "Left")), slf.attributes.get("Value", " "))
+            3, (36, 76, "Left")), slf.attributes.get("Value", "R"))
 
 
 class Res60(Component):
@@ -447,7 +446,7 @@ class ResPipe(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
-            3, (36, 76, "Left")), slf.attributes.get("Value", " "))
+            3, (36, 76, "Left")), slf.attributes.get("Value", "R"))
 
 
 class Schottky(Component):
