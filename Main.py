@@ -411,11 +411,14 @@ class PNP(Component):
 class Pot(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/pot.svg')
-        offsetx = offset_text(slf, 0, 0, 0, 7, slf.flip)
-        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(
-            0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
-        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(
-            3, (36, 76, "Left")), slf.attributes.get("Value", " "), angle=(int(slf.orientation[1:])) % 180)
+        offsetx = offset_text(slf, 0, -33, 0, 20, slf.flip)
+        offsetx2 = offset_text(slf, 0, 15, 0, 2, slf.flip)
+        offsety = offset_text(slf, 10, -45, 0, 2)
+        offsety2 = offset_text(slf, 5, 5, 0, 51)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1]+offsety, slf.windows.get(
+            0, (36, 10, "Left")), "P"+slf.attributes.get("InstName", "")[1:])
+        slf.add_text(dwg, slf.position[0] + offsetx2, slf.position[1]+offsety2, slf.windows.get(
+            3, (36, 40, "Left")), slf.attributes.get("Value", "R=10k")[2:])
 
 
 class Resistor(Component):
