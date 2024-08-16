@@ -180,8 +180,18 @@ class Capacitor(Component):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/cap.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(
             0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
+        #Si el valor es numérico se agrega la unidad#
+        val=slf.attributes.get("Value","C")
+        if all(char.isnumeric() or char == "." for char in val[:-1]): #No verifica el último caracter porque puede ser pico micro mili, etc
+            units=["f","p","n","µ","u","m","k","F","P","N","U","M","K"]
+            if True in [val[-1]==units[i] for i in range(len(units))] or val[-1].isnumeric(): #El último caracter es un número o alguna unidad
+                val = val + "F"
+        #Caso especial índice "MEG"
+        if val[-3:].lower() == "meg":
+            val = val + "F"
+
         slf.add_text(dwg, slf.position[0], slf.position[1] + 5, slf.windows.get(
-            3, (24, 56, "Left")), slf.attributes.get("Value", "F"))
+            3, (24, 56, "Left")), val)
 
 
 class Cell(Component):
@@ -192,8 +202,12 @@ class Cell(Component):
 
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + 6 + offsety,
                      slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
+        #Si el valor es numérico se agrega la unidad#
+        val=slf.attributes.get("Value"," ")
+        if all(char.isnumeric() or char == "." for char in val[:-1]):
+                val = val + "V"
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] - 8 + offsety,
-                     slf.windows.get(3, (24, 56, "Left")), slf.attributes.get("Value", " "))
+                     slf.windows.get(3, (24, 56, "Left")), val)
 
 
 class Current(Component):
@@ -299,8 +313,18 @@ class Inductor(Component):
         offsetx = offset_text(slf, 0, 0, -40)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        #Si el valor es numérico se agrega la unidad#
+        val=slf.attributes.get("Value","L")
+        if all(char.isnumeric() or char == "." for char in val[:-1]): #No verifica el último caracter porque puede ser pico micro mili, etc
+            units=["f","p","n","µ","u","m","k","F","P","N","U","M","K"]
+            if True in [val[-1]==units[i] for i in range(len(units))] or val[-1].isnumeric(): #El último caracter es un número o alguna unidad
+                val = val + "H"
+        #Caso especial índice "MEG"
+        if val[-3:].lower() == "meg":
+            val = val + "H"
+
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(
-            3, (36, 76, "Left")), slf.attributes.get("Value", " "))
+            3, (36, 76, "Left")), val)
 
 
 class LTap(Component):
@@ -427,8 +451,17 @@ class Resistor(Component):
         offsety = offset_text(slf, 0, 0, 10)
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        #Si el valor es numérico se agrega la unidad#
+        val=slf.attributes.get("Value","R")
+        if all(char.isnumeric() or char == "." for char in val[:-1]): #No verifica el último caracter porque puede ser pico micro mili, etc
+            units=["f","p","n","µ","u","m","k","F","P","N","U","M","K"]
+            if True in [val[-1]==units[i] for i in range(len(units))] or val[-1].isnumeric(): #El último caracter es un número o alguna unidad
+                val = val + "Ω"
+        #Caso especial índice "MEG"
+        if val[-3:].lower() == "meg":
+            val = val + "Ω"
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
-            3, (36, 76, "Left")), slf.attributes.get("Value", "R"))
+            3, (36, 76, "Left")), val)
 
 
 class Res60(Component):
@@ -505,8 +538,12 @@ class Voltage(Component):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/voltage.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        #Si el valor es numérico se agrega la unidad#
+        val=slf.attributes.get("Value"," ")
+        if all(char.isnumeric() or char == "." for char in val):
+                val = val + "V"
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
-            3, (36, 76, "Left")), slf.attributes.get("Value", " "))
+            3, (36, 76, "Left")), val)
 
 
 class Xtal(Component):
@@ -721,7 +758,7 @@ def create_circuit_svg(filename, wires, components):
     # Dibujar cables y detectar nodos
     for (start, end) in wires:
         dwg.add(dwg.line(start=start, end=end, stroke=svgwrite.rgb(
-            0, 0, 0, '%'), stroke_linecap="round", stroke_width=1.5))
+            0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10" , stroke_width=1.5))
         for point in [start, end]:
             if point in nodes:
                 nodes[point] += 1
