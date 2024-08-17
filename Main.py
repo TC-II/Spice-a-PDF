@@ -10,7 +10,7 @@ from reportlab.pdfbase import pdfmetrics
 import reportlab.rl_config
 reportlab.rl_config.warnOnMissingFontGlyphs = 0
 
-font_path = os.path.join('fonts', 'cmunrm.ttf')
+font_path = os.path.join('fonts', 'lmroman10-regular.ttf')
 minx = 0
 miny = 0
 
@@ -68,9 +68,9 @@ class Component:
 
             if window[2] in ["VTop", "VBottom"]:
                 dwg.add(dwg.text(text, insert=(
-                    x + (slf.flip) * coords[0], y + coords[1]), font_family="CMU Serif", font_size=size, text_anchor="middle"))
+                    x + (slf.flip) * coords[0], y + coords[1]), font_family="LM Roman 10", font_size=size, text_anchor="middle"))
             else:
-                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family="CMU Serif", font_size=size, text_anchor="end" if (
+                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family="LM Roman 10", font_size=size, text_anchor="end" if (
                     ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "start")
                 text_element.rotate(-angle, center=(x +
                                     coords[0], y + coords[1]))
@@ -718,32 +718,32 @@ def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
             text_position = (pin_position[0] -
                              int(offset/2), pin_position[1] + 5)
             dwg.add(dwg.text(text, insert=text_position,
-                    font_family="CMU Serif", font_size="20px", text_anchor="end"))
+                    font_family="LM Roman 10", font_size="20px", text_anchor="end"))
         else:
             text_position = (pin_position[0], pin_position[1] + offset)
             dwg.add(dwg.text(text, insert=text_position,
-                    font_family="CMU Serif", font_size="20px", text_anchor="middle"))
+                    font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
 
     elif "down" in directions:
         text_position = (pin_position[0], pin_position[1] - offset + 10)
         dwg.add(dwg.text(text, insert=text_position,
-                font_family="CMU Serif", font_size="20px", text_anchor="middle"))
+                font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
 
     elif "left" in directions:
         if "right" in directions:
             text_position = (pin_position[0], pin_position[1] - offset + 10)
             dwg.add(dwg.text(text, insert=text_position,
-                    font_family="CMU Serif", font_size="20px", text_anchor="middle"))
+                    font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
         else:
             text_position = (pin_position[0] +
                              int(offset/2), pin_position[1] + 5)
             dwg.add(dwg.text(text, insert=text_position,
-                    font_family="CMU Serif", font_size="20px", text_anchor="start"))
+                    font_family="LM Roman 10", font_size="20px", text_anchor="start"))
 
     elif "right" in directions:
         text_position = (pin_position[0] - int(offset/2), pin_position[1] + 5)
         dwg.add(dwg.text(text, insert=text_position,
-                font_family="CMU Serif", font_size="20px", text_anchor="end"))
+                font_family="LM Roman 10", font_size="20px", text_anchor="end"))
 
     else:
         text_position = pin_position
@@ -840,7 +840,7 @@ def modify_svg_font(svg_filename, output_svg_filename, font_name):
     with open(svg_filename, 'r', encoding='utf-8') as file:
         svg_content = file.read()
 
-    # Reemplaza cualquier referencia de fuente por CMU Serif
+    # Reemplaza cualquier referencia de fuente por LM Roman 10
     modified_svg_content = re.sub(
         r'font-family="[^"]+"', f'font-family="{font_name}"', svg_content)
 
@@ -849,12 +849,12 @@ def modify_svg_font(svg_filename, output_svg_filename, font_name):
 
 
 def svg_to_pdf(svg_filename, pdf_filename):
-    # Registrar la fuente CMU Serif
-    pdfmetrics.registerFont(TTFont('CMU_Serif', font_path))
+    # Registrar la fuente LM Roman 10
+    pdfmetrics.registerFont(TTFont('LM_Roman_10', font_path))
 
     # Registrar la fuente con el mapeo de svglib
     from svglib.fonts import register_font
-    register_font('CMU_Serif', font_path)
+    register_font('LM_Roman_10', font_path)
 
     # Leer el dibujo SVG
     drawing = svg2rlg(svg_filename)
@@ -895,7 +895,7 @@ for file_name in os.listdir(input_dir):
         wires, components, windowsize = parse_asc_file(asc_filename)
         create_circuit_svg(svg_filename, wires, components)
         modify_svg_font(
-            svg_filename, modified_svg_filename, 'CMU_Serif')
+            svg_filename, modified_svg_filename, 'LM_Roman_10')
         svg_to_pdf(modified_svg_filename, pdf_filename)
 
         # Elimina los archivos SVG generados
@@ -935,7 +935,7 @@ for root, dirs, files in os.walk(input_dir):
                 wires, components, windowsize = parse_asc_file(asc_filename)
                 create_circuit_svg(svg_filename, wires, components)
                 modify_svg_font(
-                    svg_filename, modified_svg_filename, 'CMU_Serif')
+                    svg_filename, modified_svg_filename, 'LM_Roman_10')
                 svg_to_pdf(modified_svg_filename, pdf_filename)
 
                 # Elimina los archivos SVG generados
