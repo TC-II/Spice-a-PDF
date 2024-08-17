@@ -873,7 +873,7 @@ def svg_to_pdf(svg_filename, pdf_filename):
 # Ejemplo de uso
 
 # Directorios de entrada y salida
-input_dir = 'Esquemáticos'
+input_dir = 'ASC_Files'
 output_dir = 'PDFs'
 root_dir = os.getcwd()  # Directorio raíz del programa
 
