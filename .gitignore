@@ -1,4 +1,4 @@
 * ignore all .asc files
 **.asc
 **.pdf
-./Esquemáticos/**
+/Esquemáticos/**
