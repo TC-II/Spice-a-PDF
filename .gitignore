@@ -1,5 +1,3 @@
-* ignore all .asc files
-**.asc
+# ignore all .asc files
 **.pdf
 .gitmodules
-!/ASC_Files/ejemplo.asc
