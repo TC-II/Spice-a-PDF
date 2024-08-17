@@ -2,3 +2,4 @@
 **.asc
 **.pdf
 .gitmodules
+!/ASC_Files/ejemplo.asc
