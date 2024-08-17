@@ -6,8 +6,6 @@
 	.st0{fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st1{fill:none;}
 	.st2{fill:none;stroke:#000000;stroke-width:0.5922;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st3{font-family:'CMUSerif-Roman';}
-	.st4{font-size:15px;}
 </style>
 <rect x="5" y="27" class="st0" width="22" height="58"/>
 <line class="st0" x1="16" y1="16" x2="16" y2="27"/>
@@ -33,5 +31,4 @@
 		</g>
 	</g>
 </g>
-<text transform="matrix(1 0 0 1 33.9826 83.1964)" class="st3 st4">k</text>
 </svg>
