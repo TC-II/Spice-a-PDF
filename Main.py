@@ -837,6 +837,34 @@ input_dir = 'Esquemáticos'
 output_dir = 'PDFs'
 root_dir = os.getcwd()  # Directorio raíz del programa
 
+# Recorre todos los archivos .asc en la carpeta actual
+for file_name in os.listdir(input_dir):
+    if file_name.endswith('.asc'):
+        print(f"Convirtiendo {file_name}...")
+        asc_filename = os.path.join(input_dir, file_name)
+        svg_filename = os.path.join(
+            root_dir, file_name.replace('.asc', '.svg'))
+        modified_svg_filename = os.path.join(
+            root_dir, file_name.replace('.asc', '_modified.svg'))
+        fitted_svg_filename = os.path.join(
+            root_dir, file_name.replace('.asc', '_fitted.svg'))
+        pdf_filename = os.path.join(
+            output_dir, file_name.replace('.asc', '.pdf'))
+
+        # Procesa el archivo .asc
+        wires, components, windowsize = parse_asc_file(asc_filename)
+        create_circuit_svg(svg_filename, wires, components)
+        modify_svg_font(
+            svg_filename, modified_svg_filename, 'CMU_Serif')
+        svg_to_pdf(modified_svg_filename, pdf_filename)
+
+        # Elimina los archivos SVG generados
+        if os.path.exists(svg_filename):
+            os.remove(svg_filename)
+        if os.path.exists(modified_svg_filename):
+            os.remove(modified_svg_filename)
+
+
 # Recorre todas las carpetas en el directorio de entrada
 for root, dirs, files in os.walk(input_dir):
 
