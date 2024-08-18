@@ -991,8 +991,13 @@ for file_name in os.listdir(input_dir):
             os.remove(modified_svg_filename)
 
 
+import os
+
 # Recorre todas las carpetas en el directorio de entrada
 for root, dirs, files in os.walk(input_dir):
+
+    # Filtra y elimina las carpetas que quieres ignorar
+    dirs[:] = [d for d in dirs if d != ".git"]
 
     for dir_name in dirs:
         input_folder = os.path.join(root, dir_name)
@@ -1029,5 +1034,6 @@ for root, dirs, files in os.walk(input_dir):
                     os.remove(svg_filename)
                 if os.path.exists(modified_svg_filename):
                     os.remove(modified_svg_filename)
+
 
 print("Proceso completado.")
