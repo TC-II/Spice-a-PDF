@@ -448,10 +448,16 @@ class Pot(Component):
         offsetx2 = offset_text(slf, 0, 40, 0, 2, slf.flip)
         offsety = offset_text(slf, 10, -45, 0, 2)
         offsety2 = offset_text(slf, 5, 5, 0, 51)
+        
+        offsetxk = offset_text(slf, 0, 5, 0, -5)
+        offsetyk = offset_text(slf, 0, 7, 5, 0)
+        
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1]+offsety, slf.windows.get(
             0, (36, 10, "Left")), "P"+slf.attributes.get("InstName", "")[1:])
         slf.add_text(dwg, slf.position[0] + offsetx2, slf.position[1]+offsety2, slf.windows.get(
             3, (36, 40, "Left")), slf.attributes.get("Value", "R=10k")[2:] + "Ω")
+        slf.add_text(dwg, slf.position[0] + offsetxk, slf.position[1] + offsetyk, slf.windows.get(
+            3, (33, 77, "Left")), slf.attributes.get("Value", "k"))
 
 
 class Resistor(Component):
