@@ -729,7 +729,7 @@ def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
             dwg.add(dwg.text(text, insert=text_position,
                     font_family="LM Roman 10", font_size="20px", text_anchor="end"))
         else:
-            text_position = (pin_position[0], pin_position[1] + offset)
+            text_position = (pin_position[0], pin_position[1] + offset + 2)
             dwg.add(dwg.text(text, insert=text_position,
                     font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
 
