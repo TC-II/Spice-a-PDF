@@ -10,7 +10,13 @@ from reportlab.pdfbase import pdfmetrics
 import reportlab.rl_config
 reportlab.rl_config.warnOnMissingFontGlyphs = 0
 
+
+# Definiciones del texto.
+font = "LM Roman 10"
+fontSize = "20px"
 font_path = os.path.join('fonts', 'lmroman10-regular.ttf')
+
+
 minx = 0
 miny = 0
 
@@ -74,7 +80,7 @@ class Component:
         elif slf.orientation == "R270":
             return y, -x
 
-    def add_text(slf, dwg, x, y, window, text, size="20px", angle=0):
+    def add_text(slf, dwg, x, y, window, text, size=fontSize, angle=0):
         # Añade texto al dibujo "dwg" en la posición (x, y), con la alineación especificada por "window".
         # El texto se ajusta según la orientación, el espejado y el tamaño especificado.
         
@@ -88,10 +94,10 @@ class Component:
             # Si el texto debe estar alineado en la parte superior o inferior verticalmente:
             if window[2] in ["VTop", "VBottom"]:
                 dwg.add(dwg.text(text, insert=(
-                    x + (slf.flip) * coords[0], y + coords[1]), font_family="LM Roman 10", font_size=size, text_anchor="middle"))
+                    x + (slf.flip) * coords[0], y + coords[1]), font_family=font, font_size=size, text_anchor="middle"))
             else:
                 # Crea un elemento de texto, ajustando la alineación según la orientación y el espejado:
-                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family="LM Roman 10", font_size=size, text_anchor="end" if (
+                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family=font, font_size=size, text_anchor="end" if (
                     ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "start")
                 
                 # Aplica una rotación al texto en función del ángulo especificado:
@@ -800,29 +806,29 @@ def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
         # Si hay un cable hacia arriba, coloca el texto debajo del pin.
         if "right" in directions:
             text_position = (pin_position[0] - int(offset/2), pin_position[1] + 5)
-            dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="end"))
+            dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="end"))
         else:
             text_position = (pin_position[0], pin_position[1] + offset + 2)
-            dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
+            dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="middle"))
 
     elif "down" in directions:
         # Si hay un cable hacia abajo, coloca el texto arriba del pin.
         text_position = (pin_position[0], pin_position[1] - offset + 10)
-        dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
+        dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="middle"))
 
     elif "left" in directions:
         # Si hay un cable hacia la izquierda, coloca el texto a la derecha del pin.
         if "right" in directions:
             text_position = (pin_position[0], pin_position[1] - offset + 10)
-            dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
+            dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="middle"))
         else:
             text_position = (pin_position[0] + int(offset/2), pin_position[1] + 5)
-            dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="start"))
+            dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="start"))
 
     elif "right" in directions:
         # Si hay un cable hacia la derecha, coloca el texto a la izquierda del pin.
         text_position = (pin_position[0] - int(offset/2), pin_position[1] + 5)
-        dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="end"))
+        dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="end"))
 
     else:
         # Si no se encuentra ninguna dirección de cable, no se hace nada con el texto.
