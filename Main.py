@@ -17,6 +17,14 @@ miny = 0
 
 class Component:
     def __init__(slf, component_type, position, orientation, flip, attributes, windows):
+        # Constructor que inicializa el objeto "Component" con varios parámetros:
+        # Cada "Component" Corresponde a un componente del esquemático (R, L, C, ...)
+        # "component_type": tipo de componente.
+        # "position": posición del componente en coordenadas (x, y).
+        # "orientation": orientación del componente (x ej., "R0", "R90", "R180", "R270").
+        # "flip": indicador de si el componente está espejado (flip = -1) o no (flip = 1).
+        # "attributes": atributos adicionales del componente.
+        # "windows": información relacionada con la alineación y ventanas de texto asociadas al componente (Es la forma que el Spice da la información de los textos de los componentes).
         slf.component_type = component_type
         slf.position = position
         slf.orientation = orientation
@@ -25,9 +33,14 @@ class Component:
         slf.windows = windows
 
     def draw(slf, dwg):
+        # Método abstracto para dibujar el componente en un objeto "dwg" (como un dibujo SVG).
+        # Este método debe ser implementado por cada subclase, ya que cada componente lo genera de manera distinta, de otra manera lanza una excepción "NotImplementedError".
         raise NotImplementedError
 
     def adjust_coordinates_for_orientation_and_alignment(slf, x, y, alignment):
+        # Ajusta las coordenadas (x, y) basadas en la orientación del componente y la alineación especificada.
+        # Devuelve las coordenadas ajustadas.
+        
         if alignment == "Left":
             if slf.orientation == "R0":
                 y += 6.5
@@ -49,6 +62,9 @@ class Component:
         return slf.rotate_coordinates(x, y)
 
     def rotate_coordinates(slf, x, y):
+        # Rota las coordenadas (x, y) en función de la orientación del componente.
+        # Devuelve las coordenadas rotadas.
+        
         if slf.orientation == "R0":
             return x, y
         elif slf.orientation == "R90":
@@ -59,6 +75,9 @@ class Component:
             return y, -x
 
     def add_text(slf, dwg, x, y, window, text, size="20px", angle=0):
+        # Añade texto al dibujo "dwg" en la posición (x, y), con la alineación especificada por "window".
+        # El texto se ajusta según la orientación, el espejado y el tamaño especificado.
+        
         if (not (x == 25040.2 and y == -25040.2)) and text != '""':
             coords = slf.adjust_coordinates_for_orientation_and_alignment(
                 window[0], window[1], window[2])
@@ -66,26 +85,30 @@ class Component:
                 raise ValueError(
                     "Coords cannot be None. Please check the window value.")
 
+            # Si el texto debe estar alineado en la parte superior o inferior verticalmente:
             if window[2] in ["VTop", "VBottom"]:
                 dwg.add(dwg.text(text, insert=(
                     x + (slf.flip) * coords[0], y + coords[1]), font_family="LM Roman 10", font_size=size, text_anchor="middle"))
             else:
+                # Crea un elemento de texto, ajustando la alineación según la orientación y el espejado:
                 text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family="LM Roman 10", font_size=size, text_anchor="end" if (
                     ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "start")
-                text_element.rotate(-angle, center=(x +
-                                    coords[0], y + coords[1]))
+                
+                # Aplica una rotación al texto en función del ángulo especificado:
+                text_element.rotate(-angle, center=(x + coords[0], y + coords[1]))
                 dwg.add(text_element)
 
     def draw_image_with_rotation(slf, dwg, href):
+        # Dibuja una imagen en el dibujo "dwg", aplicando rotación y/o espejado según sea necesario.
         x, y = slf.position
         image = svgwrite.image.Image(href=href, insert=(x, y))
 
         if slf.flip == -1:
-            # Espejado
+            # Si el componente está espejado, se aplica un escalado y una rotación:
             angle = int(slf.orientation[1:])
             transform = f"scale(-1, 1) translate({-2 * x}, 0) rotate({angle}, {x}, {y})"
         else:
-            # Rotación normal
+            # Si no está espejado, solo se aplica la rotación normal:
             angle = int(slf.orientation[1:])
             transform = f"rotate({angle}, {x}, {y})"
 
@@ -94,10 +117,22 @@ class Component:
 
 
 class Amp_Current(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Current.svg')
+    def draw(slf, dwg): # Implementación de "draw". Es distinto para cada componente.
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Current.svg')  # Dibuja el componente a partir de un svg que se encuentra en la carpeta de "Skins".
+
+        # Añade el primer texto a partir de los parámetros: 
+        # "dwg" : Lienzo donde dibujar el componente.
+        # "x" : Posición en el eje x del componente.
+        # "y" : Posición en el eje y del componente.
+        # "window" : Ventana donde se detallan las propiedades del label (x,y con respecto al componente, Valor, Orientación).
+        # "text": Texto a imprimir.
+        # "size" (optional): Tamaño a imprimir el texto. Por defecto es 20px.
+        # "angle" (optional): Angulo con el cual se imprime el texto.
+
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
-            0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
+            0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)   
+        
+        # Añade el segundo texto a partir de los parámetros
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             3, (36, 76, "Left")), slf.attributes.get("Value", " "), angle=(int(slf.orientation[1:])) % 180)
 
@@ -115,7 +150,7 @@ class Amp_Transimpedance(Component):
 class Ampmeter(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/ampmeter.svg')
-        offset = offset_text(slf, 7, 0, -2, 0, slf.flip)
+        offset = offset_text(slf, 7, 0, -2, 0, slf.flip) # Se agrega un offset distinto a cada orientación.
 
         slf.add_text(dwg, slf.position[0] + offset, slf.position[1] + offset, slf.windows.get(
             0, (-23, 14, "Left")), slf.attributes.get("InstName", ""), angle=90)
@@ -124,8 +159,8 @@ class Ampmeter(Component):
 class Arrow(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
-        offsetx = offset_text(slf, 0, 3, 0, 11, slf.flip)
-        offsety = offset_text(slf, 2, 0, 0, 2)
+        offsetx = offset_text(slf, 0, 3, 0, 11, slf.flip) # Se agrega un offset distinto a cada orientación. En este caso en el eje "x". En el eje x se aclara si está espejado.
+        offsety = offset_text(slf, 2, 0, 0, 2) # Se agrega un offset distinto a cada orientación. En este caso en el eje "y".
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(
             3, (21, -18, "Left")), slf.attributes.get("Value", "Ir"))
 
@@ -274,7 +309,7 @@ class Flag(Component):
     def draw(slf, dwg):
         if (slf.attributes.get("Value", slf.component_type) == "0"):
 
-            direction = get_cable_directions(slf.position, wires)
+            direction = get_cable_directions(slf.position, wires) # Obtiene la direccion en la se debe dibujar el componente.
             if direction == "up":
                 slf.orientation = "R0"
             elif direction == "down":
@@ -287,8 +322,8 @@ class Flag(Component):
             slf.draw_image_with_rotation(dwg, 'Skins/Default/GND.svg')
         else:
             slf.draw_image_with_rotation(dwg, 'Skins/Default/FLAG.svg')
-            place_text_according_to_cable(slf.position, slf.attributes.get(
-                "Value", slf.component_type), wires, dwg)
+            place_text_according_to_cable(slf.position, slf.attributes.get(     # Obtiene la direccion en la se debe dibujar el texto (Vi--- ; ---Vo ) y luego imprime.
+                "Value", slf.component_type), wires, dwg)   
 
 
 class G(Component):
@@ -359,8 +394,6 @@ class LM311(Component):
 class LM7805(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/7805.svg')
-        offsetx = offset_text(slf, -7, -6, 7, 6, slf.flip)
-        offsety = offset_text(slf, 15, 0, -11, 2)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
 
@@ -457,7 +490,7 @@ class Pot(Component):
         slf.add_text(dwg, slf.position[0] + offsetx2, slf.position[1]+offsety2, slf.windows.get(
             3, (36, 40, "Left")), slf.attributes.get("Value", "R=10k")[2:] + "Ω")
         slf.add_text(dwg, slf.position[0] + offsetxk, slf.position[1] + offsetyk, slf.windows.get(
-            3, (33, 77, "Left")), slf.attributes.get("Value", "k"))
+            3, (33, 77, "Left")), slf.attributes.get("Value", "k"))     # Se añade la letra "k"
 
 
 class Resistor(Component):
@@ -596,14 +629,16 @@ def offset_text(slf, off0=0, off90=0, off180=0, off270=0, flip=1):
 
 
 def parse_asc_file(filename):
+    # Inicializa las listas para almacenar los wires (conexiones) y componentes.
     wires = []
     components = []
     current_component = None
     windowsize = None
-    # Tamaño inicial del rectángulo más grande encontrado
+    # Tamaño inicial del rectángulo más grande encontrado.
     max_rectangle_size = (0, 0)
     global minx
     global miny
+    # Establece valores iniciales altos para las coordenadas mínimas (minx, miny).
     minx = 10000
     miny = 10000
     found_rectangle = False
@@ -611,17 +646,22 @@ def parse_asc_file(filename):
     with open(filename, 'r') as file:
         for line in file:
             parts = line.split()
+
             if parts[0] == 'RECTANGLE':
+                # Identifica líneas que describen rectángulos y calcula sus dimensiones.
                 found_rectangle = True
                 x1, y1 = map(int, parts[2:4])
                 x2, y2 = map(int, parts[4:6])
                 dx = abs(x1 - x2)
                 dy = abs(y1 - y2)
+                # Actualiza las coordenadas mínimas.
                 minx = min([x1, x2, minx])
                 miny = min([y1, y2, miny])
+                # Si el área del rectángulo es mayor que el máximo anterior, lo actualiza.
                 if (dx * dy) > (max_rectangle_size[0] * max_rectangle_size[1]):
                     max_rectangle_size = (dx, dy)
 
+        # Si no se encuentra ningún rectángulo, asigna valores predeterminados.
         if not found_rectangle:
             dx = 10000
             dy = 10000
@@ -629,19 +669,26 @@ def parse_asc_file(filename):
             miny = -5000
             if (dx * dy) > (max_rectangle_size[0] * max_rectangle_size[1]):
                 max_rectangle_size = (dx, dy)
+        
+        # Reinicia el puntero del archivo al principio para procesar las demás líneas.
         file.seek(0)
         for line in file:
             parts = line.split()
+
             if parts[0] == "WIRE":
+                # Almacena las coordenadas de las conexiones (wires).
                 x1, y1, x2, y2 = map(int, parts[1:])
                 wires.append(((x1, y1), (x2, y2)))
+
             elif parts[0] == "SYMBOL":
+                # Si hay un componente actual, lo agrega a la lista de componentes.
                 if current_component:
                     components.append(current_component)
+
                 component_type = parts[1]
                 if '\\' in component_type:
                     component_type_parts = component_type.split('\\')
-                    # Caso especial: si el nombre del componente termina en "\\"
+                    # Caso especial: si el nombre del componente termina en "\\".
                     if component_type_parts[-1] == '':
                         component_name = parts[2]
                         coords_and_orientation = parts[3:]
@@ -652,23 +699,30 @@ def parse_asc_file(filename):
                     component_name = component_type
                     coords_and_orientation = parts[2:]
 
+                # Extrae las coordenadas y la orientación del componente.
                 x, y = map(int, coords_and_orientation[:2])
-                orientation = coords_and_orientation[2] if len(
-                    coords_and_orientation) > 2 else "R0"
+                orientation = coords_and_orientation[2] if len(coords_and_orientation) > 2 else "R0"
 
+                # Determina si el componente está espejado.
                 if orientation.startswith("M"):
                     orientation = 'R' + orientation[1:]
                     flip = -1
                 else:
                     flip = 1
 
-                current_component = {"type": component_name, "position": (
-                    x, y), "orientation": orientation, "flip": flip, "attributes": {}, "windows": {}}
+                # Crea un diccionario para el componente actual con sus propiedades.
+                current_component = {"type": component_name, "position": (x, y), 
+                                     "orientation": orientation, "flip": flip, 
+                                     "attributes": {}, "windows": {}}
+
             elif parts[0] == "SYMATTR" and current_component:
+                # Almacena los atributos del componente actual
                 attribute_name = parts[1]
                 attribute_value = " ".join(parts[2:])
                 current_component["attributes"][attribute_name] = attribute_value
+
             elif parts[0] == "WINDOW" and current_component:
+                # Procesa la ventana asociada al componente.
                 if "Invisible" in parts:
                     x = 25040.2
                     y = -25040.2
@@ -678,38 +732,49 @@ def parse_asc_file(filename):
                 window_index = int(parts[1])
                 alignment = parts[4]
                 current_component["windows"][window_index] = (x, y, alignment)
+
             elif parts[0] == "FLAG":
+                # Procesa los flags (banderas) como un tipo especial de componente.
                 x, y = map(int, parts[1:3])
                 component_type = "flag"
                 orientation = "R0"
                 flip = 1
-                flag = {"type": component_type, "position": (
-                    x, y), "orientation": orientation, "flip": flip, "attributes": {}, "windows": {}}
+                flag = {"type": component_type, "position": (x, y), 
+                        "orientation": orientation, "flip": flip, 
+                        "attributes": {}, "windows": {}}
                 flag["attributes"]["Value"] = parts[3]
                 components.append(flag)
 
+        # Añade el último componente encontrado a la lista.
         if current_component:
             components.append(current_component)
 
-    # Actualiza el tamaño de la ventana si se encontraron rectángulos
+    # Actualiza el tamaño de la ventana si se encontraron rectángulos.
     if max_rectangle_size != (0, 0):
         windowsize = max_rectangle_size
 
     return wires, components, windowsize
 
 
+
 def get_cable_directions(pin_position, cables):
+    # Recibe la posición de un pin y una lista de cables (definidos por posiciones de inicio y fin).
+    # Devuelve una lista de direcciones (right, left, up, down) en las que hay cables conectados al pin.
+    
     directions = []
     for (start, end) in cables:
         if pin_position == start:
+            # Si la posición del pin coincide con el inicio del cable, calcula la dirección hacia el final del cable.
             dx = end[0] - start[0]
             dy = end[1] - start[1]
         elif pin_position == end:
+            # Si la posición del pin coincide con el final del cable, calcula la dirección hacia el inicio del cable.
             dx = start[0] - end[0]
             dy = start[1] - end[1]
         else:
             continue
 
+        # Determina las direcciones en función de los valores dx y dy y añade las direcciones correspondientes a la lista.
         if dx > 0 and "right" not in directions:
             directions.append("right")
         elif dx < 0 and "left" not in directions:
@@ -719,48 +784,48 @@ def get_cable_directions(pin_position, cables):
         elif dy < 0 and "up" not in directions:
             directions.append("up")
 
+    # Si se encontraron direcciones, las devuelve como una cadena separada por comas.
+    # Si no se encontraron direcciones, devuelve None.
     if directions:
         return ", ".join(directions)
     else:
         return None
 
-
 def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
+    # Coloca un texto en un diagrama SVG en función de la dirección de los cables conectados al pin.
+
     directions = get_cable_directions(pin_position, cables)
 
     if "up" in directions:
+        # Si hay un cable hacia arriba, coloca el texto debajo del pin.
         if "right" in directions:
-            text_position = (pin_position[0] -
-                             int(offset/2), pin_position[1] + 5)
-            dwg.add(dwg.text(text, insert=text_position,
-                    font_family="LM Roman 10", font_size="20px", text_anchor="end"))
+            text_position = (pin_position[0] - int(offset/2), pin_position[1] + 5)
+            dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="end"))
         else:
             text_position = (pin_position[0], pin_position[1] + offset + 2)
-            dwg.add(dwg.text(text, insert=text_position,
-                    font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
+            dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
 
     elif "down" in directions:
+        # Si hay un cable hacia abajo, coloca el texto arriba del pin.
         text_position = (pin_position[0], pin_position[1] - offset + 10)
-        dwg.add(dwg.text(text, insert=text_position,
-                font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
+        dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
 
     elif "left" in directions:
+        # Si hay un cable hacia la izquierda, coloca el texto a la derecha del pin.
         if "right" in directions:
             text_position = (pin_position[0], pin_position[1] - offset + 10)
-            dwg.add(dwg.text(text, insert=text_position,
-                    font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
+            dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="middle"))
         else:
-            text_position = (pin_position[0] +
-                             int(offset/2), pin_position[1] + 5)
-            dwg.add(dwg.text(text, insert=text_position,
-                    font_family="LM Roman 10", font_size="20px", text_anchor="start"))
+            text_position = (pin_position[0] + int(offset/2), pin_position[1] + 5)
+            dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="start"))
 
     elif "right" in directions:
+        # Si hay un cable hacia la derecha, coloca el texto a la izquierda del pin.
         text_position = (pin_position[0] - int(offset/2), pin_position[1] + 5)
-        dwg.add(dwg.text(text, insert=text_position,
-                font_family="LM Roman 10", font_size="20px", text_anchor="end"))
+        dwg.add(dwg.text(text, insert=text_position, font_family="LM Roman 10", font_size="20px", text_anchor="end"))
 
     else:
+        # Si no se encuentra ninguna dirección de cable, no se hace nada con el texto.
         text_position = pin_position
 
 
