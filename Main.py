@@ -165,7 +165,7 @@ class Ampmeter(Component):
 class Arrow(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
-        offsetx = offset_text(slf, 0, 3, 0, 11, slf.flip) # Se agrega un offset distinto a cada orientación. En este caso en el eje "x". En el eje x se aclara si está espejado.
+        offsetx = offset_text(slf, 0, 15, 0, -15, slf.flip) # Se agrega un offset distinto a cada orientación. En este caso en el eje "x". En el eje x se aclara si está espejado.
         offsety = offset_text(slf, 2, 0, 0, 2) # Se agrega un offset distinto a cada orientación. En este caso en el eje "y".
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(
             3, (21, -18, "Left")), slf.attributes.get("Value", "Ir"))
@@ -495,8 +495,7 @@ class Pot(Component):
             0, (36, 10, "Left")), "P"+slf.attributes.get("InstName", "")[1:])
         slf.add_text(dwg, slf.position[0] + offsetx2, slf.position[1]+offsety2, slf.windows.get(
             3, (36, 40, "Left")), slf.attributes.get("Value", "R=10k")[2:] + "Ω")
-        slf.add_text(dwg, slf.position[0] + offsetxk, slf.position[1] + offsetyk, slf.windows.get(
-            3, (33, 77, "Left")), slf.attributes.get("Value", "k"))     # Se añade la letra "k"
+        slf.add_text(dwg, slf.position[0] + offsetxk, slf.position[1] + offsetyk, (33, 77, "Left"), "k")     # Se añade la letra "k"
 
 
 class Resistor(Component):
@@ -689,7 +688,7 @@ def parse_asc_file(filename):
 
             if parts[0] == "LINE":
                 # Si falta el último parámetro, asignar 1 por defecto
-                if len(parts) < 6:
+                if len(parts) == 6:
                     line_type = 0
                 else:
                     line_type = int(parts[5])
