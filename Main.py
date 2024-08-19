@@ -637,6 +637,7 @@ def offset_text(slf, off0=0, off90=0, off180=0, off270=0, flip=1):
 def parse_asc_file(filename):
     # Inicializa las listas para almacenar los wires (conexiones) y componentes.
     wires = []
+    lines = []
     components = []
     current_component = None
     windowsize = None
@@ -685,6 +686,11 @@ def parse_asc_file(filename):
                 # Almacena las coordenadas de las conexiones (wires).
                 x1, y1, x2, y2 = map(int, parts[1:])
                 wires.append(((x1, y1), (x2, y2)))
+
+            if parts[0] == "LINE":
+                # Almacena las coordenadas de las conexiones (wires).
+                x1, y1, x2, y2, line_type = map(int, parts[2:7])
+                lines.append({"coords": ((x1, y1), (x2, y2)), "type": line_type})
 
             elif parts[0] == "SYMBOL":
                 # Si hay un componente actual, lo agrega a la lista de componentes.
@@ -759,7 +765,7 @@ def parse_asc_file(filename):
     if max_rectangle_size != (0, 0):
         windowsize = max_rectangle_size
 
-    return wires, components, windowsize
+    return wires, lines, components, windowsize
 
 
 
@@ -835,7 +841,7 @@ def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
         text_position = pin_position
 
 
-def create_circuit_svg(filename, wires, components):
+def create_circuit_svg(filename, wires, lines, components):
     global minx
     global miny
     dwg = svgwrite.Drawing(filename, size=windowsize, profile='tiny')
@@ -852,10 +858,27 @@ def create_circuit_svg(filename, wires, components):
                 nodes[point] = 1
 
     # Dibujar nodos si se intersectan 3 o más cables
-    for point, count in nodes.items():
-        if count >= 3:
-            dwg.add(dwg.circle(center=point, r=4, fill='black'))
+    for line in lines:
+        start, end = line["coords"]
+        line_type = line["type"]
+        
+        if line_type == 2:
+            stroke_dasharray = None  # Línea continua (sin punteado)
+        else:
+            stroke_dasharray = "5,5"  # Línea punteada
 
+        if stroke_dasharray:
+            line_element = dwg.line(start=start, end=end, stroke=svgwrite.rgb(
+                0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10", 
+                stroke_width=1.5, stroke_dasharray=stroke_dasharray)
+        else:
+            line_element = dwg.line(start=start, end=end, stroke=svgwrite.rgb(
+                0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10", 
+                stroke_width=1.5)
+
+        dwg.add(line_element)
+
+        
     # Dibujar componentes
     component_objects = {
         "7805": LM7805,
@@ -978,8 +1001,8 @@ for file_name in os.listdir(input_dir):
             output_dir, file_name.replace('.asc', '.pdf'))
 
         # Procesa el archivo .asc
-        wires, components, windowsize = parse_asc_file(asc_filename)
-        create_circuit_svg(svg_filename, wires, components)
+        wires, lines, components, windowsize = parse_asc_file(asc_filename)
+        create_circuit_svg(svg_filename, wires, lines, components)
         modify_svg_font(
             svg_filename, modified_svg_filename, 'LM_Roman_10')
         svg_to_pdf(modified_svg_filename, pdf_filename)
@@ -1023,8 +1046,8 @@ for root, dirs, files in os.walk(input_dir):
                     output_folder, file_name.replace('.asc', '.pdf'))
 
                 # Procesa el archivo .asc
-                wires, components, windowsize = parse_asc_file(asc_filename)
-                create_circuit_svg(svg_filename, wires, components)
+                wires, lines, components, windowsize = parse_asc_file(asc_filename)
+                create_circuit_svg(svg_filename, wires, lines, components)
                 modify_svg_font(
                     svg_filename, modified_svg_filename, 'LM_Roman_10')
                 svg_to_pdf(modified_svg_filename, pdf_filename)
