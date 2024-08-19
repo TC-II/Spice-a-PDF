@@ -863,6 +863,10 @@ def create_circuit_svg(filename, wires, lines, components):
                 nodes[point] = 1
 
     # Dibujar nodos si se intersectan 3 o más cables
+    for point, count in nodes.items():
+        if count >= 3:
+            dwg.add(dwg.circle(center=point, r=4, fill='black'))
+ 
     for line in lines:
         start, end = line["coords"]
         line_type = line["type"]
