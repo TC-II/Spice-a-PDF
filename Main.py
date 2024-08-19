@@ -513,7 +513,7 @@ class Resistor(Component):
                 val = val + "Ω"
         #Caso especial índice "MEG"
         if val[-3:].lower() == "meg":
-            val = val + "Ω"
+            val = val[:-3] + "MΩ"
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             3, (36, 76, "Left")), val)
 
