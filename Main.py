@@ -690,7 +690,7 @@ def parse_asc_file(filename):
             if parts[0] == "LINE":
                 # Si falta el último parámetro, asignar 1 por defecto
                 if len(parts) < 6:
-                    line_type = 1
+                    line_type = 0
                 else:
                     line_type = int(parts[5])
 
@@ -806,7 +806,7 @@ def get_cable_directions(pin_position, cables):
     if directions:
         return ", ".join(directions)
     else:
-        return None
+        return "up"
 
 def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
     # Coloca un texto en un diagrama SVG en función de la dirección de los cables conectados al pin.
@@ -866,24 +866,30 @@ def create_circuit_svg(filename, wires, lines, components):
     for point, count in nodes.items():
         if count >= 3:
             dwg.add(dwg.circle(center=point, r=4, fill='black'))
- 
+    
+    # Dibujar líneas
     for line in lines:
         start, end = line["coords"]
         line_type = line["type"]
         
-        if line_type == 2:
+        if line_type == 0:
             stroke_dasharray = None  # Línea continua (sin punteado)
+            stroke_width = 1.5
+        elif line_type == 1:
+            stroke_dasharray = "4,3"  # Línea intersectada
+            stroke_width = 1
         else:
-            stroke_dasharray = "5,5"  # Línea punteada
+            stroke_dasharray = "1,4"  # Línea punteada
+            stroke_width = 0.5
 
         if stroke_dasharray:
             line_element = dwg.line(start=start, end=end, stroke=svgwrite.rgb(
                 0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10", 
-                stroke_width=1.5, stroke_dasharray=stroke_dasharray)
+                stroke_width=stroke_width, stroke_dasharray=stroke_dasharray)
         else:
             line_element = dwg.line(start=start, end=end, stroke=svgwrite.rgb(
                 0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10", 
-                stroke_width=1.5)
+                stroke_width=stroke_width)
 
         dwg.add(line_element)
 
