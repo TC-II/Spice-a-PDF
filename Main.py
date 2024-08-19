@@ -688,8 +688,13 @@ def parse_asc_file(filename):
                 wires.append(((x1, y1), (x2, y2)))
 
             if parts[0] == "LINE":
-                # Almacena las coordenadas de las conexiones (wires).
-                x1, y1, x2, y2, line_type = map(int, parts[2:7])
+                # Si falta el último parámetro, asignar 1 por defecto
+                if len(parts) < 6:
+                    line_type = 1
+                else:
+                    line_type = int(parts[5])
+
+                x1, y1, x2, y2 = map(int, parts[2:6])
                 lines.append({"coords": ((x1, y1), (x2, y2)), "type": line_type})
 
             elif parts[0] == "SYMBOL":
