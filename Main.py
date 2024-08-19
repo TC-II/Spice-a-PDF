@@ -690,7 +690,7 @@ def parse_asc_file(filename):
             if parts[0] == "LINE":
                 # Si falta el último parámetro, asignar 1 por defecto
                 if len(parts) < 6:
-                    line_type = 1
+                    line_type = 0
                 else:
                     line_type = int(parts[5])
 
