@@ -1,3 +1,4 @@
 # ignore all .asc files
 /ASC_Files/Privado/
 /PDFs/Privado/
+*.lnk
