@@ -1,15 +1,37 @@
-import svgwrite
-import re
+import subprocess
+import sys
 import os
-from reportlab.pdfgen import canvas
-from svglib.svglib import svg2rlg
-from reportlab.graphics import renderPDF
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
+
+# Función para instalar librerías si no están presentes
+def install(*packages):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", *packages])
+
+# Verifica si las librerías están instaladas e instálalas si no
+try:
+    import svgwrite
+except ImportError:
+    install('svgwrite')
+
+try:
+    import re  # Esta ya viene con Python
+except ImportError:
+    install('re')
+
+try:
+    from reportlab.pdfgen import canvas
+    from reportlab.graphics import renderPDF
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+except ImportError:
+    install('reportlab')  # Paquetes separados
+
+try:
+    from svglib.svglib import svg2rlg
+except ImportError:
+    install('svglib')
 
 import reportlab.rl_config
 reportlab.rl_config.warnOnMissingFontGlyphs = 0
-
 
 # Definiciones del texto.
 font = "LM Roman 10"
@@ -509,7 +531,10 @@ class Resistor(Component):
         if all(char.isnumeric() or char == "." for char in val[:-1]): #No verifica el último caracter porque puede ser pico micro mili, etc
             units=["f","p","n","µ","u","m","k","F","P","N","U","M","K"]
             if True in [val[-1]==units[i] for i in range(len(units))] or val[-1].isnumeric(): #El último caracter es un número o alguna unidad
-                val = val + "Ω"
+                if val[-3:].lower() == "k":
+                    val = val[:-3] + "KΩ"
+                else:
+                    val = val + "Ω"
         #Caso especial índice "MEG"
         if val[-3:].lower() == "meg":
             val = val[:-3] + "MΩ"
@@ -585,6 +610,21 @@ class TL082(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
 
+class Vcc(Component):
+    def draw(slf, dwg):
+        x, y = slf.position
+        offsetx = offset_text(slf, 20,-16,-20,16, slf.flip)
+        offsety = offset_text(slf, 16,20,-15,-15)
+        slf.position = (x + offsetx, y + offsety)
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/FLAG.svg')
+        value = slf.attributes.get("Value", "V=15")
+        parts = value.split("=")
+        formatted_value = f"{parts[1]}{parts[0]}"  # Reorganizar como "15V"
+
+        offsetx = offset_text(slf, 0,16,-3,-20, slf.flip)
+        offsety = offset_text(slf, 0,10,7,-5)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(
+            3, (5, 0, "Left")), formatted_value)
 
 class Voltage(Component):
     def draw(slf, dwg):
@@ -920,6 +960,7 @@ def create_circuit_svg(filename, wires, lines, components):
         "ind": Inductor,
         "L_Tap": LTap,
         "LM311": LM311,
+        "LM741": TL082,
         "njf": NJFet,
         "nmos": NMOS,
         "npn": NPN,
@@ -937,6 +978,7 @@ def create_circuit_svg(filename, wires, lines, components):
         "switch": Switch,
         "switch_sch": SwitchSch,
         "TL082": TL082,
+        "Vcc": Vcc,
         "voltage": Voltage,
         "xtal": Xtal,
         "zener": Zener
