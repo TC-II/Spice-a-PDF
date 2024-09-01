@@ -68,7 +68,7 @@ class Component:
     def adjust_coordinates_for_orientation_and_alignment(slf, x, y, alignment):
         # Ajusta las coordenadas (x, y) basadas en la orientación del componente y la alineación especificada.
         # Devuelve las coordenadas ajustadas.
-        
+
         if alignment == "Left":
             if slf.orientation == "R0":
                 y += 6.5
@@ -92,7 +92,7 @@ class Component:
     def rotate_coordinates(slf, x, y):
         # Rota las coordenadas (x, y) en función de la orientación del componente.
         # Devuelve las coordenadas rotadas.
-        
+
         if slf.orientation == "R0":
             return x, y
         elif slf.orientation == "R90":
@@ -105,7 +105,7 @@ class Component:
     def add_text(slf, dwg, x, y, window, text, size=fontSize, angle=0):
         # Añade texto al dibujo "dwg" en la posición (x, y), con la alineación especificada por "window".
         # El texto se ajusta según la orientación, el espejado y el tamaño especificado.
-        
+
         if (not (x == 25040.2 and y == -25040.2)) and text != '""':
             coords = slf.adjust_coordinates_for_orientation_and_alignment(
                 window[0], window[1], window[2])
@@ -121,9 +121,10 @@ class Component:
                 # Crea un elemento de texto, ajustando la alineación según la orientación y el espejado:
                 text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family=font, font_size=size, text_anchor="end" if (
                     ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "start")
-                
+
                 # Aplica una rotación al texto en función del ángulo especificado:
-                text_element.rotate(-angle, center=(x + coords[0], y + coords[1]))
+                text_element.rotate(-angle, center=(x +
+                                    coords[0], y + coords[1]))
                 dwg.add(text_element)
 
     def draw_image_with_rotation(slf, dwg, href):
@@ -145,10 +146,12 @@ class Component:
 
 
 class Amp_Current(Component):
-    def draw(slf, dwg): # Implementación de "draw". Es distinto para cada componente.
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Current.svg')  # Dibuja el componente a partir de un svg que se encuentra en la carpeta de "Skins".
+    # Implementación de "draw". Es distinto para cada componente.
+    def draw(slf, dwg):
+        # Dibuja el componente a partir de un svg que se encuentra en la carpeta de "Skins".
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Current.svg')
 
-        # Añade el primer texto a partir de los parámetros: 
+        # Añade el primer texto a partir de los parámetros:
         # "dwg" : Lienzo donde dibujar el componente.
         # "x" : Posición en el eje x del componente.
         # "y" : Posición en el eje y del componente.
@@ -158,8 +161,8 @@ class Amp_Current(Component):
         # "angle" (optional): Angulo con el cual se imprime el texto.
 
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
-            0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)   
-        
+            0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
+
         # Añade el segundo texto a partir de los parámetros
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             3, (36, 76, "Left")), slf.attributes.get("Value", " "), angle=(int(slf.orientation[1:])) % 180)
@@ -178,7 +181,8 @@ class Amp_Transimpedance(Component):
 class Ampmeter(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/ampmeter.svg')
-        offset = offset_text(slf, 7, 0, -2, 0, slf.flip) # Se agrega un offset distinto a cada orientación.
+        # Se agrega un offset distinto a cada orientación.
+        offset = offset_text(slf, 7, 0, -2, 0, slf.flip)
 
         slf.add_text(dwg, slf.position[0] + offset, slf.position[1] + offset, slf.windows.get(
             0, (-23, 14, "Left")), slf.attributes.get("InstName", ""), angle=90)
@@ -187,8 +191,10 @@ class Ampmeter(Component):
 class Arrow(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
-        offsetx = offset_text(slf, 0, 15, 0, -15, slf.flip) # Se agrega un offset distinto a cada orientación. En este caso en el eje "x". En el eje x se aclara si está espejado.
-        offsety = offset_text(slf, 2, 0, 0, 2) # Se agrega un offset distinto a cada orientación. En este caso en el eje "y".
+        # Se agrega un offset distinto a cada orientación. En este caso en el eje "x". En el eje x se aclara si está espejado.
+        offsetx = offset_text(slf, 0, 15, 0, -15, slf.flip)
+        # Se agrega un offset distinto a cada orientación. En este caso en el eje "y".
+        offsety = offset_text(slf, 2, 0, 0, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(
             3, (21, -18, "Left")), slf.attributes.get("Value", "Ir"))
 
@@ -243,13 +249,16 @@ class Capacitor(Component):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/cap.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(
             0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
-        #Si el valor es numérico se agrega la unidad#
-        val=slf.attributes.get("Value","C")
-        if all(char.isnumeric() or char == "." for char in val[:-1]): #No verifica el último caracter porque puede ser pico micro mili, etc
-            units=["f","p","n","µ","u","m","k","F","P","N","U","M","K"]
-            if True in [val[-1]==units[i] for i in range(len(units))] or val[-1].isnumeric(): #El último caracter es un número o alguna unidad
+        # Si el valor es numérico se agrega la unidad#
+        val = slf.attributes.get("Value", "C")
+        # No verifica el último caracter porque puede ser pico micro mili, etc
+        if all(char.isnumeric() or char == "." for char in val[:-1]):
+            units = ["f", "p", "n", "µ", "u", "m",
+                     "k", "F", "P", "N", "U", "M", "K"]
+            # El último caracter es un número o alguna unidad
+            if True in [val[-1] == units[i] for i in range(len(units))] or val[-1].isnumeric():
                 val = val + "F"
-        #Caso especial índice "MEG"
+        # Caso especial índice "MEG"
         if val[-3:].lower() == "meg":
             val = val + "F"
 
@@ -265,10 +274,10 @@ class Cell(Component):
 
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + 6 + offsety,
                      slf.windows.get(0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
-        #Si el valor es numérico se agrega la unidad#
-        val=slf.attributes.get("Value"," ")
+        # Si el valor es numérico se agrega la unidad#
+        val = slf.attributes.get("Value", " ")
         if all(char.isnumeric() or char == "." for char in val[:-1]):
-                val = val + "V"
+            val = val + "V"
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] - 8 + offsety,
                      slf.windows.get(3, (24, 56, "Left")), val)
 
@@ -282,15 +291,18 @@ class Current(Component):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/current.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1] - offset, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        #Si el valor es numérico se agrega la unidad#
-        val=slf.attributes.get("Value"," ")
-        if all(char.isnumeric() or char == "." for char in val[:-1]): #No verifica el último caracter porque puede ser pico micro mili, etc
-            units=["f","p","n","µ","u","m","k","F","P","N","U","M","K"]
-            if True in [val[-1]==units[i] for i in range(len(units))] or val[-1].isnumeric(): #El último caracter es un número o alguna unidad
+        # Si el valor es numérico se agrega la unidad#
+        val = slf.attributes.get("Value", " ")
+        # No verifica el último caracter porque puede ser pico micro mili, etc
+        if all(char.isnumeric() or char == "." for char in val[:-1]):
+            units = ["f", "p", "n", "µ", "u", "m",
+                     "k", "F", "P", "N", "U", "M", "K"]
+            # El último caracter es un número o alguna unidad
+            if True in [val[-1] == units[i] for i in range(len(units))] or val[-1].isnumeric():
                 val = val + "A"
-        #Caso especial índice "MEG"
+        # Caso especial índice "MEG"
         if val[-3:].lower() == "meg":
-            val = val + "A"        
+            val = val + "A"
         slf.add_text(dwg, slf.position[0], slf.position[1] - offset3, slf.windows.get(
             3, (36, 76, "Left")), slf.attributes.get("Value", " "))
 
@@ -337,7 +349,8 @@ class Flag(Component):
     def draw(slf, dwg):
         if (slf.attributes.get("Value", slf.component_type) == "0"):
 
-            direction = get_cable_directions(slf.position, wires) # Obtiene la direccion en la se debe dibujar el componente.
+            # Obtiene la direccion en la se debe dibujar el componente.
+            direction = get_cable_directions(slf.position, wires)
             if direction == "up":
                 slf.orientation = "R0"
             elif direction == "down":
@@ -349,9 +362,9 @@ class Flag(Component):
 
             slf.draw_image_with_rotation(dwg, 'Skins/Default/GND.svg')
         else:
-            slf.draw_image_with_rotation(dwg, 'Skins/Default/FLAG.svg')
+            slf.draw_image_with_rotation(dwg, 'Skins/Default/flag.svg')
             place_text_according_to_cable(slf.position, slf.attributes.get(     # Obtiene la direccion en la se debe dibujar el texto (Vi--- ; ---Vo ) y luego imprime.
-                "Value", slf.component_type), wires, dwg)   
+                "Value", slf.component_type), wires, dwg)
 
 
 class G(Component):
@@ -385,13 +398,16 @@ class Inductor(Component):
         offsetx = offset_text(slf, 0, 0, -40)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        #Si el valor es numérico se agrega la unidad#
-        val=slf.attributes.get("Value","L")
-        if all(char.isnumeric() or char == "." for char in val[:-1]): #No verifica el último caracter porque puede ser pico micro mili, etc
-            units=["f","p","n","µ","u","m","k","F","P","N","U","M","K"]
-            if True in [val[-1]==units[i] for i in range(len(units))] or val[-1].isnumeric(): #El último caracter es un número o alguna unidad
+        # Si el valor es numérico se agrega la unidad#
+        val = slf.attributes.get("Value", "L")
+        # No verifica el último caracter porque puede ser pico micro mili, etc
+        if all(char.isnumeric() or char == "." for char in val[:-1]):
+            units = ["f", "p", "n", "µ", "u", "m",
+                     "k", "F", "P", "N", "U", "M", "K"]
+            # El último caracter es un número o alguna unidad
+            if True in [val[-1] == units[i] for i in range(len(units))] or val[-1].isnumeric():
                 val = val + "H"
-        #Caso especial índice "MEG"
+        # Caso especial índice "MEG"
         if val[-3:].lower() == "meg":
             val = val + "H"
 
@@ -446,7 +462,7 @@ class NMOS(Component):
 
 class NPN(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/npn.svg')
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/NPN.svg')
         offsety = offset_text(slf, 0, 0, -24, 0)
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
@@ -509,15 +525,16 @@ class Pot(Component):
         offsetx2 = offset_text(slf, 0, 40, 0, 2, slf.flip)
         offsety = offset_text(slf, 10, -45, 0, 2)
         offsety2 = offset_text(slf, 5, 5, 0, 51)
-        
+
         offsetxk = offset_text(slf, 0, 5, 0, -5)
         offsetyk = offset_text(slf, 0, 7, 5, 0)
-        
+
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1]+offsety, slf.windows.get(
             0, (36, 10, "Left")), "P"+slf.attributes.get("InstName", "")[1:])
         slf.add_text(dwg, slf.position[0] + offsetx2, slf.position[1]+offsety2, slf.windows.get(
             3, (36, 40, "Left")), slf.attributes.get("Value", "R=10k")[2:] + "Ω")
-        slf.add_text(dwg, slf.position[0] + offsetxk, slf.position[1] + offsetyk, (33, 77, "Left"), "k")     # Se añade la letra "k"
+        slf.add_text(dwg, slf.position[0] + offsetxk, slf.position[1] +
+                     offsetyk, (33, 77, "Left"), "k")     # Se añade la letra "k"
 
 
 class Resistor(Component):
@@ -526,16 +543,16 @@ class Resistor(Component):
         offsety = offset_text(slf, 0, 0, 10)
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        #Si el valor es numérico se agrega la unidad#
-        val=slf.attributes.get("Value","R")
-        if all(char.isnumeric() or char == "." for char in val[:-1]): #No verifica el último caracter porque puede ser pico micro mili, etc
-            units=["f","p","n","µ","u","m","k","F","P","N","U","M","K"]
-            if True in [val[-1]==units[i] for i in range(len(units))] or val[-1].isnumeric(): #El último caracter es un número o alguna unidad
-                if val[-3:].lower() == "k":
-                    val = val[:-3] + "KΩ"
-                else:
-                    val = val + "Ω"
-        #Caso especial índice "MEG"
+        # Si el valor es numérico se agrega la unidad#
+        val = slf.attributes.get("Value", "R")
+        # No verifica el último caracter porque puede ser pico micro mili, etc
+        if all(char.isnumeric() or char == "." for char in val[:-1]):
+            units = ["f", "p", "n", "µ", "u", "m",
+                     "k", "F", "P", "N", "U", "M", "K"]
+            # El último caracter es un número o alguna unidad
+            if True in [val[-1] == units[i] for i in range(len(units))] or val[-1].isnumeric():
+                val = val + "Ω"
+        # Caso especial índice "MEG"
         if val[-3:].lower() == "meg":
             val = val[:-3] + "MΩ"
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
@@ -631,10 +648,10 @@ class Voltage(Component):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/voltage.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
-        #Si el valor es numérico se agrega la unidad#
-        val=slf.attributes.get("Value"," ")
+        # Si el valor es numérico se agrega la unidad#
+        val = slf.attributes.get("Value", " ")
         if all(char.isnumeric() or char == "." for char in val):
-                val = val + "V"
+            val = val + "V"
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             3, (36, 76, "Left")), val)
 
@@ -715,7 +732,7 @@ def parse_asc_file(filename):
             miny = -5000
             if (dx * dy) > (max_rectangle_size[0] * max_rectangle_size[1]):
                 max_rectangle_size = (dx, dy)
-        
+
         # Reinicia el puntero del archivo al principio para procesar las demás líneas.
         file.seek(0)
         for line in file:
@@ -734,7 +751,8 @@ def parse_asc_file(filename):
                     line_type = int(parts[5])
 
                 x1, y1, x2, y2 = map(int, parts[2:6])
-                lines.append({"coords": ((x1, y1), (x2, y2)), "type": line_type})
+                lines.append(
+                    {"coords": ((x1, y1), (x2, y2)), "type": line_type})
 
             elif parts[0] == "SYMBOL":
                 # Si hay un componente actual, lo agrega a la lista de componentes.
@@ -757,7 +775,8 @@ def parse_asc_file(filename):
 
                 # Extrae las coordenadas y la orientación del componente.
                 x, y = map(int, coords_and_orientation[:2])
-                orientation = coords_and_orientation[2] if len(coords_and_orientation) > 2 else "R0"
+                orientation = coords_and_orientation[2] if len(
+                    coords_and_orientation) > 2 else "R0"
 
                 # Determina si el componente está espejado.
                 if orientation.startswith("M"):
@@ -767,8 +786,8 @@ def parse_asc_file(filename):
                     flip = 1
 
                 # Crea un diccionario para el componente actual con sus propiedades.
-                current_component = {"type": component_name, "position": (x, y), 
-                                     "orientation": orientation, "flip": flip, 
+                current_component = {"type": component_name, "position": (x, y),
+                                     "orientation": orientation, "flip": flip,
                                      "attributes": {}, "windows": {}}
 
             elif parts[0] == "SYMATTR" and current_component:
@@ -795,8 +814,8 @@ def parse_asc_file(filename):
                 component_type = "flag"
                 orientation = "R0"
                 flip = 1
-                flag = {"type": component_type, "position": (x, y), 
-                        "orientation": orientation, "flip": flip, 
+                flag = {"type": component_type, "position": (x, y),
+                        "orientation": orientation, "flip": flip,
                         "attributes": {}, "windows": {}}
                 flag["attributes"]["Value"] = parts[3]
                 components.append(flag)
@@ -812,11 +831,10 @@ def parse_asc_file(filename):
     return wires, lines, components, windowsize
 
 
-
 def get_cable_directions(pin_position, cables):
     # Recibe la posición de un pin y una lista de cables (definidos por posiciones de inicio y fin).
     # Devuelve una lista de direcciones (right, left, up, down) en las que hay cables conectados al pin.
-    
+
     directions = []
     for (start, end) in cables:
         if pin_position == start:
@@ -847,6 +865,7 @@ def get_cable_directions(pin_position, cables):
     else:
         return "up"
 
+
 def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
     # Coloca un texto en un diagrama SVG en función de la dirección de los cables conectados al pin.
 
@@ -855,30 +874,38 @@ def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
     if "up" in directions:
         # Si hay un cable hacia arriba, coloca el texto debajo del pin.
         if "right" in directions:
-            text_position = (pin_position[0] - int(offset/2), pin_position[1] + 5)
-            dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="end"))
+            text_position = (pin_position[0] -
+                             int(offset/2), pin_position[1] + 5)
+            dwg.add(dwg.text(text, insert=text_position,
+                    font_family=font, font_size=fontSize, text_anchor="end"))
         else:
             text_position = (pin_position[0], pin_position[1] + offset + 2)
-            dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="middle"))
+            dwg.add(dwg.text(text, insert=text_position, font_family=font,
+                    font_size=fontSize, text_anchor="middle"))
 
     elif "down" in directions:
         # Si hay un cable hacia abajo, coloca el texto arriba del pin.
         text_position = (pin_position[0], pin_position[1] - offset + 10)
-        dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="middle"))
+        dwg.add(dwg.text(text, insert=text_position, font_family=font,
+                font_size=fontSize, text_anchor="middle"))
 
     elif "left" in directions:
         # Si hay un cable hacia la izquierda, coloca el texto a la derecha del pin.
         if "right" in directions:
             text_position = (pin_position[0], pin_position[1] - offset + 10)
-            dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="middle"))
+            dwg.add(dwg.text(text, insert=text_position, font_family=font,
+                    font_size=fontSize, text_anchor="middle"))
         else:
-            text_position = (pin_position[0] + int(offset/2), pin_position[1] + 5)
-            dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="start"))
+            text_position = (pin_position[0] +
+                             int(offset/2), pin_position[1] + 5)
+            dwg.add(dwg.text(text, insert=text_position,
+                    font_family=font, font_size=fontSize, text_anchor="start"))
 
     elif "right" in directions:
         # Si hay un cable hacia la derecha, coloca el texto a la izquierda del pin.
         text_position = (pin_position[0] - int(offset/2), pin_position[1] + 5)
-        dwg.add(dwg.text(text, insert=text_position, font_family=font, font_size=fontSize, text_anchor="end"))
+        dwg.add(dwg.text(text, insert=text_position, font_family=font,
+                font_size=fontSize, text_anchor="end"))
 
     else:
         # Si no se encuentra ninguna dirección de cable, no se hace nada con el texto.
@@ -894,7 +921,7 @@ def create_circuit_svg(filename, wires, lines, components):
     # Dibujar cables y detectar nodos
     for (start, end) in wires:
         dwg.add(dwg.line(start=start, end=end, stroke=svgwrite.rgb(
-            0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10" , stroke_width=1.5))
+            0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10", stroke_width=1.5))
         for point in [start, end]:
             if point in nodes:
                 nodes[point] += 1
@@ -905,12 +932,12 @@ def create_circuit_svg(filename, wires, lines, components):
     for point, count in nodes.items():
         if count >= 3:
             dwg.add(dwg.circle(center=point, r=4, fill='black'))
-    
+
     # Dibujar líneas
     for line in lines:
         start, end = line["coords"]
         line_type = line["type"]
-        
+
         if line_type == 0:
             stroke_dasharray = None  # Línea continua (sin punteado)
             stroke_width = 1.5
@@ -923,16 +950,15 @@ def create_circuit_svg(filename, wires, lines, components):
 
         if stroke_dasharray:
             line_element = dwg.line(start=start, end=end, stroke=svgwrite.rgb(
-                0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10", 
+                0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10",
                 stroke_width=stroke_width, stroke_dasharray=stroke_dasharray)
         else:
             line_element = dwg.line(start=start, end=end, stroke=svgwrite.rgb(
-                0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10", 
+                0, 0, 0, '%'), stroke_linecap="round", stroke_linejoin="round", stroke_miterlimit="10",
                 stroke_width=stroke_width)
 
         dwg.add(line_element)
 
-        
     # Dibujar componentes
     component_objects = {
         "7805": LM7805,
@@ -1070,8 +1096,6 @@ for file_name in os.listdir(input_dir):
             os.remove(modified_svg_filename)
 
 
-import os
-
 # Recorre todas las carpetas en el directorio de entrada
 for root, dirs, files in os.walk(input_dir):
 
@@ -1102,7 +1126,8 @@ for root, dirs, files in os.walk(input_dir):
                     output_folder, file_name.replace('.asc', '.pdf'))
 
                 # Procesa el archivo .asc
-                wires, lines, components, windowsize = parse_asc_file(asc_filename)
+                wires, lines, components, windowsize = parse_asc_file(
+                    asc_filename)
                 create_circuit_svg(svg_filename, wires, lines, components)
                 modify_svg_font(
                     svg_filename, modified_svg_filename, 'LM_Roman_10')
