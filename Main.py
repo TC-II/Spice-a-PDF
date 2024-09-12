@@ -694,6 +694,7 @@ def parse_asc_file(filename):
     wires = []
     lines = []
     components = []
+    comments = []
     current_component = None
     windowsize = None
     # Tamaño inicial del rectángulo más grande encontrado.
@@ -818,6 +819,14 @@ def parse_asc_file(filename):
                         "attributes": {}, "windows": {}}
                 flag["attributes"]["Value"] = parts[3]
                 components.append(flag)
+            
+            elif parts[0] == "TEXT":
+                # Procesa las líneas de texto. Identifica comentarios (;) y directivas (!).
+                x, y = map(int, parts[1:3])
+                orientation = parts[3]
+                if parts[5].startswith(";"):
+                    comment = " ".join(parts[5:])[1:]
+                    comments.append({"position": (x, y), "orientation": orientation, "text": comment})
 
         # Añade el último componente encontrado a la lista.
         if current_component:
@@ -827,7 +836,7 @@ def parse_asc_file(filename):
     if max_rectangle_size != (0, 0):
         windowsize = max_rectangle_size
 
-    return wires, lines, components, windowsize
+    return wires, lines, components, comments, windowsize
 
 
 def get_cable_directions(pin_position, cables):
@@ -911,7 +920,32 @@ def place_text_according_to_cable(pin_position, text, cables, dwg, offset=20):
         text_position = pin_position
 
 
-def create_circuit_svg(filename, wires, lines, components):
+def add_comment(dwg, pos, text, angle):
+    # Diccionario que mapea los valores de 'angle' a los grados correspondientes
+    angle_map = {
+        "Left": 0,
+        "VLeft": 90,
+        "Right": 0,
+        "VRight": 90
+    }
+    
+    # Obtén el valor de ángulo a partir del diccionario
+    ang = angle_map.get(angle, 0)  # Si no encuentra el valor, por defecto usa 0
+
+    # Crea un elemento de texto, ajustando la alineación según la orientación y el espejado:
+    text_element = dwg.text(
+        text, 
+        insert=(pos[0], pos[1]), 
+        font_family=font, 
+        font_size=fontSize, 
+        text_anchor="start" if angle in ["VLeft", "Left"] else "end"
+    )
+
+    # Aplica una rotación al texto en función del ángulo especificado:
+    text_element.rotate(-ang, center=(pos[0], pos[1]))
+    dwg.add(text_element)
+
+def create_circuit_svg(filename, wires, lines, components, comments):
     global minx
     global miny
     dwg = svgwrite.Drawing(filename, size=windowsize, profile='tiny')
@@ -931,6 +965,12 @@ def create_circuit_svg(filename, wires, lines, components):
     for point, count in nodes.items():
         if count >= 3:
             dwg.add(dwg.circle(center=point, r=4, fill='black'))
+
+    #Escribir comentarios
+    for comment in comments:
+        add_comment(dwg, comment['position'], comment['text'], comment['orientation'])
+
+
 
     # Dibujar líneas
     for line in lines:
@@ -1082,8 +1122,8 @@ for file_name in os.listdir(input_dir):
             output_dir, file_name.replace('.asc', '.pdf'))
 
         # Procesa el archivo .asc
-        wires, lines, components, windowsize = parse_asc_file(asc_filename)
-        create_circuit_svg(svg_filename, wires, lines, components)
+        wires, lines, components, comments, windowsize = parse_asc_file(asc_filename)
+        create_circuit_svg(svg_filename, wires, lines, components, comments)
         modify_svg_font(
             svg_filename, modified_svg_filename, 'LM_Roman_10')
         svg_to_pdf(modified_svg_filename, pdf_filename)
@@ -1125,9 +1165,8 @@ for root, dirs, files in os.walk(input_dir):
                     output_folder, file_name.replace('.asc', '.pdf'))
 
                 # Procesa el archivo .asc
-                wires, lines, components, windowsize = parse_asc_file(
-                    asc_filename)
-                create_circuit_svg(svg_filename, wires, lines, components)
+                wires, lines, components, comments, windowsize = parse_asc_file(asc_filename)
+                create_circuit_svg(svg_filename, wires, lines, components, comments)
                 modify_svg_font(
                     svg_filename, modified_svg_filename, 'LM_Roman_10')
                 svg_to_pdf(modified_svg_filename, pdf_filename)
