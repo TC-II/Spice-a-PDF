@@ -432,8 +432,7 @@ class LM311(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             3, (-112, 7, "Left")), slf.attributes.get("Value", " "), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
-            69, (-89, 82, "Left")), slf.attributes.get("Value", "O_GND"), "8px", angle=(int(slf.orientation[1:])) % 180)
-
+            69, (-89, 82, "Left")), "GND", "8px", angle=(int(slf.orientation[1:])) % 180)
 
 class LM7805(Component):
     def draw(slf, dwg):
