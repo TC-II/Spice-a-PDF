@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import os
+import re
 
 # Función para instalar librerías si no están presentes
 def install(*packages):
@@ -11,11 +12,7 @@ try:
     import svgwrite
 except ImportError:
     install('svgwrite')
-
-try:
-    import re  # Esta ya viene con Python
-except ImportError:
-    install('re')
+    import svgwrite
 
 try:
     from reportlab.pdfgen import canvas
@@ -24,14 +21,19 @@ try:
     from reportlab.pdfbase import pdfmetrics
 except ImportError:
     install('reportlab')  # Paquetes separados
+    from reportlab.pdfgen import canvas
+    from reportlab.graphics import renderPDF
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    import reportlab.rl_config
+    reportlab.rl_config.warnOnMissingFontGlyphs = 0
 
 try:
     from svglib.svglib import svg2rlg
 except ImportError:
     install('svglib')
+    from svglib.svglib import svg2rlg
 
-import reportlab.rl_config
-reportlab.rl_config.warnOnMissingFontGlyphs = 0
 
 # Definiciones del texto.
 font = "LM Roman 10"
