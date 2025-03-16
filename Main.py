@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import os
+import re
 
 # Función para instalar librerías si no están presentes
 def install(*packages):
@@ -11,11 +12,7 @@ try:
     import svgwrite
 except ImportError:
     install('svgwrite')
-
-try:
-    import re  # Esta ya viene con Python
-except ImportError:
-    install('re')
+    import svgwrite
 
 try:
     from reportlab.pdfgen import canvas
@@ -24,14 +21,19 @@ try:
     from reportlab.pdfbase import pdfmetrics
 except ImportError:
     install('reportlab')  # Paquetes separados
+    from reportlab.pdfgen import canvas
+    from reportlab.graphics import renderPDF
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfbase import pdfmetrics
+    import reportlab.rl_config
+    reportlab.rl_config.warnOnMissingFontGlyphs = 0
 
 try:
     from svglib.svglib import svg2rlg
 except ImportError:
     install('svglib')
+    from svglib.svglib import svg2rlg
 
-import reportlab.rl_config
-reportlab.rl_config.warnOnMissingFontGlyphs = 0
 
 # Definiciones del texto.
 font = "LM Roman 10"
@@ -142,6 +144,7 @@ class Component:
             transform = f"rotate({angle}, {x}, {y})"
 
         image['transform'] = transform
+        image['style'] = "filter: invert(26%) sepia(97%) saturate(496%) hue-rotate(77deg) brightness(95%) contrast(85%);"
         dwg.add(image)
 
 
@@ -241,7 +244,7 @@ class Bv(Component):
 
 class Bypass(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/bypass.svg')
+        slf.draw_image_with_rotation(dwg, 'Skins/BypassVerde/bypass.svg')
 
 
 class Capacitor(Component):
@@ -395,9 +398,11 @@ class GainBlock(Component):
 class Inductor(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/ind.svg')
-        offsetx = offset_text(slf, 0, 0, -40)
+        offsetx = offset_text(slf, -0, 0, -40)
+        offsetx2 = offset_text(slf, 0, 0, -40)
+
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(
-            0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+            0, (-2, 40, "Left")), slf.attributes.get("InstName", ""))
         # Si el valor es numérico se agrega la unidad#
         val = slf.attributes.get("Value", "L")
         # No verifica el último caracter porque puede ser pico micro mili, etc
@@ -411,8 +416,8 @@ class Inductor(Component):
         if val[-3:].lower() == "meg":
             val = val + "H"
 
-        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(
-            3, (36, 76, "Left")), val)
+        slf.add_text(dwg, slf.position[0] + offsetx2, slf.position[1], slf.windows.get(
+            3, (-2, 72, "Left")), val)
 
 
 class LTap(Component):
@@ -556,6 +561,16 @@ class Resistor(Component):
             val = val[:-3] + "MΩ"
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             3, (36, 76, "Left")), val)
+
+class Res45(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/res_45.svg')
+        offsetx = offset_text(slf, 15, 0, -17, 0, slf.flip)
+        offsety = offset_text(slf, 0, -30, 10, -25)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
+                     slf.windows.get(0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
+                     slf.windows.get(3, (36, 76, "Left")), slf.attributes.get("Value", " "))
 
 
 class Res60(Component):
@@ -938,7 +953,8 @@ def add_comment(dwg, pos, text, angle):
         insert=(pos[0], pos[1]), 
         font_family=font, 
         font_size=fontSize, 
-        text_anchor="start" if angle in ["VLeft", "Left"] else "end"
+        text_anchor="start" if angle in ["VLeft", "Left"] else "end",
+        fill="#005B96"
     )
 
     # Aplica una rotación al texto en función del ángulo especificado:
@@ -1035,6 +1051,7 @@ def create_circuit_svg(filename, wires, lines, components, comments):
         "pnp": PNP,
         "pot": Pot,
         "res": Resistor,
+        "res_45": Res45,
         "res_60": Res60,
         "res_pipe": ResPipe,
         "schottky": Schottky,
