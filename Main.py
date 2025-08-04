@@ -244,7 +244,7 @@ class Bv(Component):
 
 class Bypass(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/BypassVerde/bypass.svg')
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/bypass.svg')
 
 
 class Capacitor(Component):
@@ -471,6 +471,14 @@ class NPN(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
 
+class node(Component):
+    def draw(slf, dwg):
+        x, y = slf.position
+        offsetx = offset_text(slf, 16,-16,-16,16, slf.flip)
+        offsety = offset_text(slf, 16,16,-16,-16)
+        slf.position = (x + offsetx, y + offsety)
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/FLAG.svg')
+
 
 class Not(Component):
     def draw(slf, dwg):
@@ -495,7 +503,26 @@ class OpAmp(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             123, (-176, 48, "Left")), slf.attributes.get("Value2", " "), "9px", (int(slf.orientation[1:])) % 180)
 
+class OA_Signal(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Signal.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            3, (-176, 32, "Left")), slf.attributes.get("Value", " "), "9px",  (int(slf.orientation[1:])) % 180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            123, (-176, 48, "Left")), slf.attributes.get("Value2", " "), "9px", (int(slf.orientation[1:])) % 180)
 
+class OA_Signal2(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Signal2.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            3, (-176, 32, "Left")), slf.attributes.get("Value", " "), "9px",  (int(slf.orientation[1:])) % 180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            123, (-176, 48, "Left")), slf.attributes.get("Value2", " "), "9px", (int(slf.orientation[1:])) % 180)
+    
 class PJFet(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/pjf.svg')
@@ -1017,7 +1044,6 @@ def create_circuit_svg(filename, wires, lines, components, comments):
     # Dibujar componentes
     component_objects = {
         "7805": LM7805,
-        "Not": Not,
         "Amp_Current": Amp_Current,
         "Amp_Transimpedance": Amp_Transimpedance,
         "ampmeter": Ampmeter,
@@ -1045,7 +1071,11 @@ def create_circuit_svg(filename, wires, lines, components, comments):
         "njf": NJFet,
         "nmos": NMOS,
         "npn": NPN,
+        "Not": Not,
+        "node": node,
         "OA_Ideal": OpAmp,
+        "OA_Signal": OA_Signal,
+        "OA_Signal2": OA_Signal2,
         "pjf": PJFet,
         "pmos": PMOS,
         "pnp": PNP,
