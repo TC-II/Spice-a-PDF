@@ -121,8 +121,8 @@ class Component:
                     x + (slf.flip) * coords[0], y + coords[1]), font_family=font, font_size=size, text_anchor="middle", fill=color))
             else:
                 # Crea un elemento de texto, ajustando la alineación según la orientación y el espejado:
-                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family=font, font_size=size, text_anchor="start" if (
-                    ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "end")
+                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family=font, font_size=size, text_anchor="end" if (
+                    ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "start")
 
                 # Aplica una rotación al texto en función del ángulo especificado:
                 text_element.rotate(-angle, center=(x +
