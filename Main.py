@@ -205,9 +205,9 @@ class Arrow(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
         # Se agrega un offset distinto a cada orientación. En este caso en el eje "x". En el eje x se aclara si está espejado.
-        offsetx = offset_text(slf, 10, -12, 0, -15, slf.flip)
+        offsetx = offset_text(slf, 0, 0, 0, -1, slf.flip)
         # Se agrega un offset distinto a cada orientación. En este caso en el eje "y".
-        offsety = offset_text(slf, 10, -10, 0, 2)
+        offsety = offset_text(slf, 14, 10, 0, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(
             3, (21, -18, "VTop")), slf.attributes.get("Value", "Ir"))
 
