@@ -104,7 +104,7 @@ class Component:
         elif slf.orientation == "R270":
             return y, -x
 
-    def add_text(slf, dwg, x, y, window, text, size=fontSize, angle=0):
+    def add_text(slf, dwg, x, y, window, text, size=fontSize, angle=0, color = "#000000"):
         # Añade texto al dibujo "dwg" en la posición (x, y), con la alineación especificada por "window".
         # El texto se ajusta según la orientación, el espejado y el tamaño especificado.
 
@@ -118,11 +118,11 @@ class Component:
             # Si el texto debe estar alineado en la parte superior o inferior verticalmente:
             if window[2] in ["VTop", "VBottom"]:
                 dwg.add(dwg.text(text, insert=(
-                    x + (slf.flip) * coords[0], y + coords[1]), font_family=font, font_size=size, text_anchor="middle"))
+                    x + (slf.flip) * coords[0], y + coords[1]), font_family=font, font_size=size, text_anchor="middle", fill=color))
             else:
                 # Crea un elemento de texto, ajustando la alineación según la orientación y el espejado:
-                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family=font, font_size=size, text_anchor="end" if (
-                    ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "start")
+                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family=font, font_size=size, text_anchor="start" if (
+                    ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "end")
 
                 # Aplica una rotación al texto en función del ángulo especificado:
                 text_element.rotate(-angle, center=(x +
@@ -205,11 +205,11 @@ class Arrow(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
         # Se agrega un offset distinto a cada orientación. En este caso en el eje "x". En el eje x se aclara si está espejado.
-        offsetx = offset_text(slf, 0, 15, 0, -15, slf.flip)
+        offsetx = offset_text(slf, 10, -12, 0, -15, slf.flip)
         # Se agrega un offset distinto a cada orientación. En este caso en el eje "y".
-        offsety = offset_text(slf, 2, 0, 0, 2)
+        offsety = offset_text(slf, 10, -10, 0, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(
-            3, (21, -18, "Left")), slf.attributes.get("Value", "Ir"))
+            3, (21, -18, "VTop")), slf.attributes.get("Value", "Ir"))
 
 
 class Arrow_curve(Component):
@@ -229,6 +229,13 @@ class Arrow_Z(Component):
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
                      slf.windows.get(3, (21, -22, "Left")), slf.attributes.get("Value", "Zi"))
 
+class Arrow_Z2(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_Z2.svg')
+        offsetx = offset_text(slf, -3, 7, 4, -6, slf.flip)
+        offsety = offset_text(slf, 10, 10, 3, 2)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
+                     slf.windows.get(3, (21, -22, "Left")), slf.attributes.get("Value", "Zi"))
 
 class Bi(Component):
     def draw(slf, dwg):
@@ -455,6 +462,13 @@ class LM7805(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
 
+class MarcadorBloques(Component):
+    def draw(slf, dwg):
+        offsety = offset_text(slf,10, -13, 2, 10)
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/Marcador_Bloques.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
+            0, (15, -32, "VTop")), slf.attributes.get("Value", "G"), color = "#005B96")
+
 
 class NJFet(Component):
     def draw(slf, dwg):
@@ -473,6 +487,13 @@ class NMOS(Component):
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
                      slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
 
+class NMOS4(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/nmos4.svg')
+        offsetx = offset_text(slf, -6, 0, 6, -0, slf.flip)
+        offsety = offset_text(slf, 15, 3, -7, 0)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
+                     slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
 
 class NPN(Component):
     def draw(slf, dwg):
@@ -550,6 +571,14 @@ class PMOS(Component):
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
                      slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
 
+class PMOS4(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/pmos4.svg')
+        offsetx = offset_text(slf, -7, -3, 7, 6, slf.flip)
+        offsety = offset_text(slf, 15, 2, -11, 2)
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
+                     slf.windows.get(0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
+        
 
 class PNP(Component):
     def draw(slf, dwg):
@@ -1061,6 +1090,7 @@ def create_circuit_svg(filename, wires, lines, components, comments):
         "arrow": Arrow,
         "arrow_curve": Arrow_curve,
         "arrow_Z": Arrow_Z,
+        "arrow_Z2": Arrow_Z2,
         "bv": Bv,
         "bi": Bi,
         "bypass": Bypass,
@@ -1079,8 +1109,10 @@ def create_circuit_svg(filename, wires, lines, components, comments):
         "L_Tap": LTap,
         "LM311": LM311,
         "LM741": TL082,
+        "Marcador_Bloques" : MarcadorBloques,
         "njf": NJFet,
         "nmos": NMOS,
+        "nmos4": NMOS4,
         "npn": NPN,
         "Not": Not,
         "node": node,
@@ -1089,6 +1121,7 @@ def create_circuit_svg(filename, wires, lines, components, comments):
         "OA_Signal2": OA_Signal2,
         "pjf": PJFet,
         "pmos": PMOS,
+        "pmos4": PMOS4,
         "pnp": PNP,
         "pot": Pot,
         "res": Resistor,
