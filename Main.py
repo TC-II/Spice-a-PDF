@@ -123,12 +123,8 @@ class Component:
                     x + (slf.flip) * coords[0], y + coords[1]), font_family=font, font_size=size, text_anchor="middle", fill=color))
             else:
                 # Crea un elemento de texto, ajustando la alineación según la orientación y el espejado:
-                if(slf.attributes["InstName"][0]=="L"):
-                    text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family=font, font_size=size, text_anchor="start" if (
-                        ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "end")
-                else:
-                    text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family=font, font_size=size, text_anchor="end" if (
-                        ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "start")
+                text_element = dwg.text(text, insert=(x + ((slf.flip) * coords[0]), y + coords[1]), font_family=font, font_size=size, text_anchor="end" if (
+                    ((slf.orientation == "R90" or slf.orientation == "R180") and slf.flip == 1) or ((slf.orientation == "R0" or slf.orientation == "R270") and slf.flip == -1)) else "start")
                 # Aplica una rotación al texto en función del ángulo especificado:
                 text_element.rotate(-angle, center=(x +
                                     coords[0], y + coords[1]))
@@ -411,18 +407,23 @@ class G2(Component):
 
 
 class GainBlock(Component):
-    def draw(slf, dwg):
+    def draw(slf, dwg):      
         slf.draw_image_with_rotation(dwg, 'Skins/Default/Gain_Block.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+
+        offsetx = offset_text(slf, -10, 32.5, 10, -30, slf.flip)
+        offsety = offset_text(slf, 0, 0, 5, 10, slf.flip)
+       
+        slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety, slf.windows.get(
             3, (-158, 48, "Left")), slf.attributes.get("Value", "K = 10"))
 
 
 class Inductor(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/ind.svg')
-        offsetx = offset_text(slf, 16, 0, 0)#offset_text(slf, -0, 0, 40)
-        offsetx2 = 0#offset_text(slf, 0, 0, -40)
-        
+        offsetx = offset_text(slf, 0, -112.5, 0, 112.5, slf.flip)
+        offsetx2 = offset_text(slf, 0, -112.5, 0, 112.5, slf.flip)
+        slf.flip *= -1 # el inductor tiene los textos al revés de R y C por default
+       
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1], slf.windows.get(
             0, (-2, 40, "Left")), slf.attributes.get("InstName", ""))
         # Si el valor es numérico se agrega la unidad#
