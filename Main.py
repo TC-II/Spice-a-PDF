@@ -1204,19 +1204,34 @@ input_dir = 'ASC_Files'
 output_dir = 'PDFs'
 root_dir = os.getcwd()  # Directorio raíz del programa
 
+
+
+if not os.path.exists(output_dir):
+    os.mkdir(output_dir)
+
+cant_archivos = 0
 # Recorre todos los archivos .asc en la carpeta actual
 for file_name in os.listdir(input_dir):
     if file_name.endswith('.asc'):
-        print(f"Convirtiendo {file_name}...")
         asc_filename = os.path.join(input_dir, file_name)
+        pdf_filename = os.path.join(
+            output_dir, file_name.replace('.asc', '.pdf'))
+        
+        if os.path.exists(pdf_filename):
+            asc_mtime = os.path.getmtime(asc_filename)
+            pdf_mtime = os.path.getmtime(pdf_filename)
+            if pdf_mtime >= asc_mtime:
+                # print(f"Saltando {file_name} (PDF actualizado)")
+                continue  # Sale del bucle de archivos en esta carpeta 
+        cant_archivos += 1
+        print(f"Convirtiendo {file_name}...")
+
         svg_filename = os.path.join(
             root_dir, file_name.replace('.asc', '.svg'))
         modified_svg_filename = os.path.join(
             root_dir, file_name.replace('.asc', '_modified.svg'))
         fitted_svg_filename = os.path.join(
             root_dir, file_name.replace('.asc', '_fitted.svg'))
-        pdf_filename = os.path.join(
-            output_dir, file_name.replace('.asc', '.pdf'))
 
         # Procesa el archivo .asc
         wires, lines, components, comments, windowsize = parse_asc_file(asc_filename)
@@ -1230,7 +1245,6 @@ for file_name in os.listdir(input_dir):
             os.remove(svg_filename)
         if os.path.exists(modified_svg_filename):
             os.remove(modified_svg_filename)
-
 
 # Recorre todas las carpetas en el directorio de entrada
 for root, dirs, files in os.walk(input_dir):
@@ -1250,16 +1264,27 @@ for root, dirs, files in os.walk(input_dir):
         # Recorre todos los archivos .asc en la carpeta actual
         for file_name in os.listdir(input_folder):
             if file_name.endswith('.asc'):
-                print(f"Convirtiendo {file_name}...")
                 asc_filename = os.path.join(input_folder, file_name)
+                pdf_filename = os.path.join(
+                    output_folder, file_name.replace('.asc', '.pdf'))
+                
+                if os.path.exists(pdf_filename):
+                    asc_mtime = os.path.getmtime(asc_filename)
+                    pdf_mtime = os.path.getmtime(pdf_filename)
+                    print(asc_mtime, pdf_mtime)
+                    if pdf_mtime >= asc_mtime:
+                        # print(f"Saltando {file_name} (PDF actualizado)")
+                        continue  # Sale del bucle de archivos en esta carpeta    
+                cant_archivos += 1
+                print(f"Convirtiendo {file_name}...")
+
                 svg_filename = os.path.join(
                     root_dir, file_name.replace('.asc', '.svg'))
                 modified_svg_filename = os.path.join(
                     root_dir, file_name.replace('.asc', '_modified.svg'))
                 fitted_svg_filename = os.path.join(
                     root_dir, file_name.replace('.asc', '_fitted.svg'))
-                pdf_filename = os.path.join(
-                    output_folder, file_name.replace('.asc', '.pdf'))
+                
 
                 # Procesa el archivo .asc
                 wires, lines, components, comments, windowsize = parse_asc_file(asc_filename)
@@ -1275,4 +1300,4 @@ for root, dirs, files in os.walk(input_dir):
                     os.remove(modified_svg_filename)
 
 
-print("Proceso completado.")
+print("Proceso completado,",cant_archivos, "archivos convertidos.")
