@@ -1271,7 +1271,6 @@ for root, dirs, files in os.walk(input_dir):
                 if os.path.exists(pdf_filename):
                     asc_mtime = os.path.getmtime(asc_filename)
                     pdf_mtime = os.path.getmtime(pdf_filename)
-                    print(asc_mtime, pdf_mtime)
                     if pdf_mtime >= asc_mtime:
                         # print(f"Saltando {file_name} (PDF actualizado)")
                         continue  # Sale del bucle de archivos en esta carpeta    
