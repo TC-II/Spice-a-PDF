@@ -1188,7 +1188,7 @@ def svg_to_pdf(svg_filename, pdf_filename):
 
     # Crear el canvas PDF
     c = canvas.Canvas(pdf_filename, pagesize=windowsize)
-
+    c.setTitle(pdf_filename.split('\\')[-1])
     # Dibujar el SVG en el PDF
     renderPDF.draw(drawing, c, 0, 0)
 
