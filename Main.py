@@ -2,6 +2,7 @@ import subprocess
 import sys
 import os
 import re
+from time import sleep
 
 # Función para instalar librerías si no están presentes
 def install(*packages):
@@ -797,23 +798,25 @@ def parse_asc_file(filename):
     found_rectangle = False
 
     with open(filename, 'r') as file:
-        for line in file:
-            parts = line.split()
+        try:
+            for line in file:
+                parts = line.split()
 
-            if parts[0] == 'RECTANGLE':
-                # Identifica líneas que describen rectángulos y calcula sus dimensiones.
-                found_rectangle = True
-                x1, y1 = map(int, parts[2:4])
-                x2, y2 = map(int, parts[4:6])
-                dx = abs(x1 - x2)
-                dy = abs(y1 - y2)
-                # Actualiza las coordenadas mínimas.
-                minx = min([x1, x2, minx])
-                miny = min([y1, y2, miny])
-                # Si el área del rectángulo es mayor que el máximo anterior, lo actualiza.
-                if (dx * dy) > (max_rectangle_size[0] * max_rectangle_size[1]):
-                    max_rectangle_size = (dx, dy)
-
+                if parts[0] == 'RECTANGLE':
+                    # Identifica líneas que describen rectángulos y calcula sus dimensiones.
+                    found_rectangle = True
+                    x1, y1 = map(int, parts[2:4])
+                    x2, y2 = map(int, parts[4:6])
+                    dx = abs(x1 - x2)
+                    dy = abs(y1 - y2)
+                    # Actualiza las coordenadas mínimas.
+                    minx = min([x1, x2, minx])
+                    miny = min([y1, y2, miny])
+                    # Si el área del rectángulo es mayor que el máximo anterior, lo actualiza.
+                    if (dx * dy) > (max_rectangle_size[0] * max_rectangle_size[1]):
+                        max_rectangle_size = (dx, dy)
+        except UnicodeDecodeError as e:
+            pass
         # Si no se encuentra ningún rectángulo, asigna valores predeterminados.
         if not found_rectangle:
             dx = 10000
@@ -825,99 +828,101 @@ def parse_asc_file(filename):
 
         # Reinicia el puntero del archivo al principio para procesar las demás líneas.
         file.seek(0)
-        for line in file:
-            parts = line.split()
+        try:
+            for line in file:
+                parts = line.split()
 
-            if parts[0] == "WIRE":
-                # Almacena las coordenadas de las conexiones (wires).
-                x1, y1, x2, y2 = map(int, parts[1:])
-                wires.append(((x1, y1), (x2, y2)))
+                if parts[0] == "WIRE":
+                    # Almacena las coordenadas de las conexiones (wires).
+                    x1, y1, x2, y2 = map(int, parts[1:])
+                    wires.append(((x1, y1), (x2, y2)))
 
-            if parts[0] == "LINE":
-                # Si falta el último parámetro, asignar 1 por defecto
-                if len(parts) == 6:
-                    line_type = 0
-                else:
-                    line_type = int(parts[5])
-
-                x1, y1, x2, y2 = map(int, parts[2:6])
-                lines.append(
-                    {"coords": ((x1, y1), (x2, y2)), "type": line_type})
-
-            elif parts[0] == "SYMBOL":
-                # Si hay un componente actual, lo agrega a la lista de componentes.
-                if current_component:
-                    components.append(current_component)
-
-                component_type = parts[1]
-                if '\\' in component_type:
-                    component_type_parts = component_type.split('\\')
-                    # Caso especial: si el nombre del componente termina en "\\".
-                    if component_type_parts[-1] == '':
-                        component_name = parts[2]
-                        coords_and_orientation = parts[3:]
+                if parts[0] == "LINE":
+                    # Si falta el último parámetro, asignar 1 por defecto
+                    if len(parts) == 6:
+                        line_type = 0
                     else:
-                        component_name = component_type_parts[-1].split()[-1]
+                        line_type = int(parts[5])
+
+                    x1, y1, x2, y2 = map(int, parts[2:6])
+                    lines.append(
+                        {"coords": ((x1, y1), (x2, y2)), "type": line_type})
+
+                elif parts[0] == "SYMBOL":
+                    # Si hay un componente actual, lo agrega a la lista de componentes.
+                    if current_component:
+                        components.append(current_component)
+
+                    component_type = parts[1]
+                    if '\\' in component_type:
+                        component_type_parts = component_type.split('\\')
+                        # Caso especial: si el nombre del componente termina en "\\".
+                        if component_type_parts[-1] == '':
+                            component_name = parts[2]
+                            coords_and_orientation = parts[3:]
+                        else:
+                            component_name = component_type_parts[-1].split()[-1]
+                            coords_and_orientation = parts[2:]
+                    else:
+                        component_name = component_type
                         coords_and_orientation = parts[2:]
-                else:
-                    component_name = component_type
-                    coords_and_orientation = parts[2:]
 
-                # Extrae las coordenadas y la orientación del componente.
-                x, y = map(int, coords_and_orientation[:2])
-                orientation = coords_and_orientation[2] if len(
-                    coords_and_orientation) > 2 else "R0"
+                    # Extrae las coordenadas y la orientación del componente.
+                    x, y = map(int, coords_and_orientation[:2])
+                    orientation = coords_and_orientation[2] if len(
+                        coords_and_orientation) > 2 else "R0"
 
-                # Determina si el componente está espejado.
-                if orientation.startswith("M"):
-                    orientation = 'R' + orientation[1:]
-                    flip = -1
-                else:
+                    # Determina si el componente está espejado.
+                    if orientation.startswith("M"):
+                        orientation = 'R' + orientation[1:]
+                        flip = -1
+                    else:
+                        flip = 1
+
+                    # Crea un diccionario para el componente actual con sus propiedades.
+                    current_component = {"type": component_name, "position": (x, y),
+                                        "orientation": orientation, "flip": flip,
+                                        "attributes": {}, "windows": {}}
+
+                elif parts[0] == "SYMATTR" and current_component:
+                    # Almacena los atributos del componente actual
+                    attribute_name = parts[1]
+                    attribute_value = " ".join(parts[2:])
+                    current_component["attributes"][attribute_name] = attribute_value
+
+                elif parts[0] == "WINDOW" and current_component:
+                    # Procesa la ventana asociada al componente.
+                    if "Invisible" in parts:
+                        x = 25040.2
+                        y = -25040.2
+                    else:
+                        x, y = map(int, parts[2:4])
+
+                    window_index = int(parts[1])
+                    alignment = parts[4]
+                    current_component["windows"][window_index] = (x, y, alignment)
+
+                elif parts[0] == "FLAG":
+                    # Procesa los flags (banderas) como un tipo especial de componente.
+                    x, y = map(int, parts[1:3])
+                    component_type = "flag"
+                    orientation = "R0"
                     flip = 1
-
-                # Crea un diccionario para el componente actual con sus propiedades.
-                current_component = {"type": component_name, "position": (x, y),
-                                     "orientation": orientation, "flip": flip,
-                                     "attributes": {}, "windows": {}}
-
-            elif parts[0] == "SYMATTR" and current_component:
-                # Almacena los atributos del componente actual
-                attribute_name = parts[1]
-                attribute_value = " ".join(parts[2:])
-                current_component["attributes"][attribute_name] = attribute_value
-
-            elif parts[0] == "WINDOW" and current_component:
-                # Procesa la ventana asociada al componente.
-                if "Invisible" in parts:
-                    x = 25040.2
-                    y = -25040.2
-                else:
-                    x, y = map(int, parts[2:4])
-
-                window_index = int(parts[1])
-                alignment = parts[4]
-                current_component["windows"][window_index] = (x, y, alignment)
-
-            elif parts[0] == "FLAG":
-                # Procesa los flags (banderas) como un tipo especial de componente.
-                x, y = map(int, parts[1:3])
-                component_type = "flag"
-                orientation = "R0"
-                flip = 1
-                flag = {"type": component_type, "position": (x, y),
-                        "orientation": orientation, "flip": flip,
-                        "attributes": {}, "windows": {}}
-                flag["attributes"]["Value"] = parts[3]
-                components.append(flag)
-            
-            elif parts[0] == "TEXT":
-                # Procesa las líneas de texto. Identifica comentarios (;) y directivas (!).
-                x, y = map(int, parts[1:3])
-                orientation = parts[3]
-                if parts[5].startswith(";"):
-                    comment = " ".join(parts[5:])[1:]
-                    comments.append({"position": (x, y), "orientation": orientation, "text": comment})
-
+                    flag = {"type": component_type, "position": (x, y),
+                            "orientation": orientation, "flip": flip,
+                            "attributes": {}, "windows": {}}
+                    flag["attributes"]["Value"] = parts[3]
+                    components.append(flag)
+                
+                elif parts[0] == "TEXT":
+                    # Procesa las líneas de texto. Identifica comentarios (;) y directivas (!).
+                    x, y = map(int, parts[1:3])
+                    orientation = parts[3]
+                    if parts[5].startswith(";"):
+                        comment = " ".join(parts[5:])[1:]
+                        comments.append({"position": (x, y), "orientation": orientation, "text": comment})
+        except UnicodeDecodeError as e:
+            pass
         # Añade el último componente encontrado a la lista.
         if current_component:
             components.append(current_component)
@@ -1256,8 +1261,10 @@ for file_name in os.listdir(input_dir):
 for root, dirs, files in os.walk(input_dir):
 
     # Filtra y elimina las carpetas que quieres ignorar
-    dirs[:] = [d for d in dirs if d != ".git"]
-
+    ignore_list = [".git", "PDFs", "Spice-a-PDF", ".venv"]
+    for item in ignore_list:
+        while item in dirs: 
+            dirs.remove(item)
     for dir_name in dirs:
         input_folder = os.path.join(root, dir_name)
         output_folder = os.path.join(
