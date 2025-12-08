@@ -34,7 +34,7 @@ except ImportError:
     install('svglib')
     from svglib.svglib import svg2rlg
 
-
+skin_path = 'Spice-a-PDF/Skins/Default' if os.path.exists('Spice-a-PDF') else 'Skins/Default'
 # Definiciones del texto.
 font = "LM Roman 10"
 fontSize = "20px"
@@ -156,7 +156,7 @@ class Amp_Current(Component):
     # Implementación de "draw". Es distinto para cada componente.
     def draw(slf, dwg):
         # Dibuja el componente a partir de un svg que se encuentra en la carpeta de "Skins".
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Current.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/Amp_Current.svg')
 
         # Añade el primer texto a partir de los parámetros:
         # "dwg" : Lienzo donde dibujar el componente.
@@ -178,7 +178,7 @@ class Amp_Current(Component):
 class Amp_Transimpedance(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(
-            dwg, 'Skins/Default/Amp_Transimpedance.svg')
+            dwg, skin_path+'/Amp_Transimpedance.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -187,7 +187,7 @@ class Amp_Transimpedance(Component):
 
 class Amp_Yiu(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Yiu.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/Amp_Yiu.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -197,7 +197,7 @@ class Amp_Yiu(Component):
 
 class Ampmeter(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/ampmeter.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/ampmeter.svg')
         # Se agrega un offset distinto a cada orientación.
         offset = offset_text(slf, 7, 0, -2, 0, slf.flip)
 
@@ -207,7 +207,7 @@ class Ampmeter(Component):
 
 class Arrow(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/arrow.svg')
         # Se agrega un offset distinto a cada orientación. En este caso en el eje "x". En el eje x se aclara si está espejado.
         offsetx = offset_text(slf, 0, 0, 0, -1, slf.flip)
         # Se agrega un offset distinto a cada orientación. En este caso en el eje "y".
@@ -218,7 +218,7 @@ class Arrow(Component):
 
 class Arrow_curve(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_curve.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/arrow_curve.svg')
         offsetx = offset_text(slf, 3, 7, -3, -9, slf.flip)
         offsety = offset_text(slf, -1, 15, -7, -4)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -227,7 +227,7 @@ class Arrow_curve(Component):
 
 class Arrow_Z(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_Z.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/arrow_Z.svg')
         offsetx = offset_text(slf, -3, 7, 4, -6, slf.flip)
         offsety = offset_text(slf, 10, 10, 3, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -235,7 +235,7 @@ class Arrow_Z(Component):
 
 class Arrow_Z2(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/arrow_Z2.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/arrow_Z2.svg')
         offsetx = offset_text(slf, -3, 7, 4, -6, slf.flip)
         offsety = offset_text(slf, 10, 10, 3, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -243,7 +243,7 @@ class Arrow_Z2(Component):
 
 class Bi(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/bi.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/bi.svg')
         offsety = offset_text(slf, -15, 0, 18)
         offsety2 = offset_text(slf, -15, 0, -15)
 
@@ -255,7 +255,7 @@ class Bi(Component):
 
 class Bv(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/bv.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/bv.svg')
         offsety = offset_text(slf, 0, 0, 18)
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
@@ -265,12 +265,12 @@ class Bv(Component):
 
 class Bypass(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/bypass.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/bypass.svg')
 
 
 class Capacitor(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/cap.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/cap.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1] - 8, slf.windows.get(
             0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
         # Si el valor es numérico se agrega la unidad#
@@ -292,7 +292,7 @@ class Capacitor(Component):
 
 class Cell(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/cell.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/cell.svg')
         offsetx = offset_text(slf, -5, 0, -2, slf.flip)
         offsety = offset_text(slf, 0, 0, 9)
 
@@ -312,7 +312,7 @@ class Current(Component):
         offset = offset_text(slf, 22, 0, -13, 0)
         offset3 = offset_text(slf, 22, 0, 13, 0)
 
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/current.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/current.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1] - offset, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
         # Si el valor es numérico se agrega la unidad#
@@ -334,7 +334,7 @@ class Current(Component):
 class Diode(Component):
     def draw(slf, dwg):
         offsety = offset_text(slf, 0, 0, 0, 3)
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/diode.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/diode.svg')
         slf.add_text(dwg, slf.position[0] + 1, slf.position[1] + 1, slf.windows.get(
             0, (24, 0, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0] + 3, slf.position[1] - 4 + offsety,
@@ -346,14 +346,14 @@ class Diode45(Component):
         offsetx = offset_text(slf, -30, 18, -5, 35, slf.flip)
         offsety = offset_text(slf, -8, -30, -40, -15)
 
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/diode_45.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/diode_45.svg')
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
                      slf.windows.get(0, (24, 0, "Left")), slf.attributes.get("InstName", ""))
 
 
 class E(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/e.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/e.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -362,7 +362,7 @@ class E(Component):
 
 class E2(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/e2.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/e2.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -384,16 +384,16 @@ class Flag(Component):
             elif direction == "right":
                 slf.orientation = "R90"
 
-            slf.draw_image_with_rotation(dwg, 'Skins/Default/GND.svg')
+            slf.draw_image_with_rotation(dwg, skin_path+'/GND.svg')
         else:
-            slf.draw_image_with_rotation(dwg, 'Skins/Default/flag.svg')
+            slf.draw_image_with_rotation(dwg, skin_path+'/flag.svg')
             place_text_according_to_cable(slf.position, slf.attributes.get(     # Obtiene la direccion en la se debe dibujar el texto (Vi--- ; ---Vo ) y luego imprime.
                 "Value", slf.component_type), wires, dwg)
 
 
 class G(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/g.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/g.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -402,7 +402,7 @@ class G(Component):
 
 class G2(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/g2.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/g2.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -411,7 +411,7 @@ class G2(Component):
 
 class GainBlock(Component):
     def draw(slf, dwg):      
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/Gain_Block.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/Gain_Block.svg')
 
         offsetx = offset_text(slf, -10, 32.5, 10, -30, slf.flip)
         offsety = offset_text(slf, 0, 0, 5, 10, slf.flip)
@@ -422,7 +422,7 @@ class GainBlock(Component):
 
 class Inductor(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/ind.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/ind.svg')
         offsetx = offset_text(slf, 0, -112.5, 0, 112.5, slf.flip)
         offsetx2 = offset_text(slf, 0, -112.5, 0, 112.5, slf.flip)
         slf.flip *= -1 # el inductor tiene los textos al revés de R y C por default
@@ -448,7 +448,7 @@ class Inductor(Component):
 
 class LTap(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/L_Tap.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/L_Tap.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             3, (40, 58, "Left")), slf.attributes.get("Value", " "), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -457,7 +457,7 @@ class LTap(Component):
 
 class LM311(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/LM311.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/LM311.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (-112, -16, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -467,21 +467,21 @@ class LM311(Component):
 
 class LM7805(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/7805.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/7805.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
 
 class MarcadorBloques(Component):
     def draw(slf, dwg):
         offsety = offset_text(slf,10, -13, 2, 10)
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/Marcador_Bloques.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/Marcador_Bloques.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (15, -32, "VTop")), slf.attributes.get("Value", "G"), color = "#005B96")
 
 
 class NJFet(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/njf.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/njf.svg')
         offsetx = offset_text(slf, -7, -6, 7, 6, slf.flip)
         offsety = offset_text(slf, 15, 0, -11, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -490,7 +490,7 @@ class NJFet(Component):
 
 class NMOS(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/nmos.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/nmos.svg')
         offsetx = offset_text(slf, -6, 0, 6, -0, slf.flip)
         offsety = offset_text(slf, 15, 3, -7, 0)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -498,7 +498,7 @@ class NMOS(Component):
 
 class NMOS4(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/nmos4.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/nmos4.svg')
         offsetx = offset_text(slf, -6, 0, 6, -0, slf.flip)
         offsety = offset_text(slf, 15, 3, -7, 0)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -506,7 +506,7 @@ class NMOS4(Component):
 
 class NPN(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/NPN.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/NPN.svg')
         offsety = offset_text(slf, 0, 0, -24, 0)
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
@@ -517,12 +517,12 @@ class node(Component):
         offsetx = offset_text(slf, 16,-16,-16,16, slf.flip)
         offsety = offset_text(slf, 16,16,-16,-16)
         slf.position = (x + offsetx, y + offsety)
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/FLAG.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/FLAG.svg')
 
 
 class Not(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/74HCU04 Not.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/74HCU04 Not.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (16, 16, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -535,7 +535,7 @@ class Not(Component):
 
 class OpAmp(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Ideal.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/OA_Ideal.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -545,7 +545,7 @@ class OpAmp(Component):
 
 class OA_Signal(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Signal.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/OA_Signal.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -555,7 +555,7 @@ class OA_Signal(Component):
 
 class OA_Signal2(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Signal2.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/OA_Signal2.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -565,7 +565,7 @@ class OA_Signal2(Component):
     
 class PJFet(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/pjf.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/pjf.svg')
         offsetx = offset_text(slf, -7, -6, 7, 6, slf.flip)
         offsety = offset_text(slf, 15, 0, -11, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -574,7 +574,7 @@ class PJFet(Component):
 
 class PMOS(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/pmos.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/pmos.svg')
         offsetx = offset_text(slf, -7, -3, 7, 6, slf.flip)
         offsety = offset_text(slf, 15, 2, -11, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -582,7 +582,7 @@ class PMOS(Component):
 
 class PMOS4(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/pmos4.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/pmos4.svg')
         offsetx = offset_text(slf, -7, -3, 7, 6, slf.flip)
         offsety = offset_text(slf, 15, 2, -11, 2)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -591,7 +591,7 @@ class PMOS4(Component):
 
 class PNP(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/PNP.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/PNP.svg')
         offsety = offset_text(slf, 0, 0, -24, 0)
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (56, 32, "Left")), slf.attributes.get("InstName", ""))
@@ -599,7 +599,7 @@ class PNP(Component):
 
 class Pot(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/pot.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/pot.svg')
         offsetx = offset_text(slf, 0, -33, 0, 20, slf.flip)
         offsetx2 = offset_text(slf, 0, 40, 0, 2, slf.flip)
         offsety = offset_text(slf, 10, -45, 0, 2)
@@ -618,7 +618,7 @@ class Pot(Component):
 
 class Resistor(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/res.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/res.svg')
         offsety = offset_text(slf, 0, 0, 10)
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
@@ -639,7 +639,7 @@ class Resistor(Component):
 
 class Res45(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/res_45.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/res_45.svg')
         offsetx = offset_text(slf, 15, 0, -17, 0, slf.flip)
         offsety = offset_text(slf, 0, -30, 10, -25)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -650,7 +650,7 @@ class Res45(Component):
 
 class Res60(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/res_60.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/res_60.svg')
         offsetx = offset_text(slf, 15, 0, -17, 0, slf.flip)
         offsety = offset_text(slf, 0, -30, 10, -25)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -661,7 +661,7 @@ class Res60(Component):
 
 class ResPipe(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/res_pipe.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/res_pipe.svg')
         offsety = offset_text(slf, 7, 7)
         slf.add_text(dwg, slf.position[0], slf.position[1] + offsety, slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
@@ -671,7 +671,7 @@ class ResPipe(Component):
 
 class Schottky(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/schottky.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/schottky.svg')
         offsetx = offset_text(slf, -10, 0, -17, slf.flip)
         offsety = offset_text(slf, 0, 0, 37)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -682,7 +682,7 @@ class Schottky(Component):
 
 class Signal(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/signal.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/signal.svg')
         offsetx = offset_text(slf, 0, 0, -8, 0, slf.flip)
         offsety = offset_text(slf, 0, 0, 20, 0)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
@@ -693,7 +693,7 @@ class Signal(Component):
 
 class Supply(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/supply.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/supply.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -702,17 +702,17 @@ class Supply(Component):
 
 class Switch(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/switch.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/switch.svg')
 
 
 class SwitchSch(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/switch_sch.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/switch_sch.svg')
 
 
 class TL082(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/TL082.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/TL082.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
 
@@ -722,7 +722,7 @@ class Vcc(Component):
         offsetx = offset_text(slf, 20,-16,-20,16, slf.flip)
         offsety = offset_text(slf, 16,20,-15,-15)
         slf.position = (x + offsetx, y + offsety)
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/FLAG.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/FLAG.svg')
         value = slf.attributes.get("Value", "V=15")
         parts = value.split("=")
         formatted_value = f"{parts[1]}{parts[0]}"  # Reorganizar como "15V"
@@ -734,7 +734,7 @@ class Vcc(Component):
 
 class Voltage(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/voltage.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/voltage.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (36, 40, "Left")), slf.attributes.get("InstName", ""))
         # Si el valor es numérico se agrega la unidad#
@@ -747,7 +747,7 @@ class Voltage(Component):
 
 class Xtal(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/xtal_.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/xtal_.svg')
         offsety = offset_text(slf, 0, 0, 23, 0)
         slf.add_text(dwg, slf.position[0], slf.position[1] - 8 + offsety, slf.windows.get(
             0, (24, 8, "Left")), slf.attributes.get("InstName", ""))
@@ -757,7 +757,7 @@ class Xtal(Component):
 
 class Zener(Component):
     def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/zener.svg')
+        slf.draw_image_with_rotation(dwg, skin_path+'/zener.svg')
         offsetx = offset_text(slf, -10, 0, -18, 0, slf.flip)
         offsety = offset_text(slf, 0, 0, 37)
         slf.add_text(dwg, slf.position[0] + offsetx, slf.position[1] + offsety,
