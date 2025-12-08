@@ -1305,4 +1305,4 @@ for root, dirs, files in os.walk(input_dir):
                     os.remove(modified_svg_filename)
 
 
-print("Proceso completado,",cant_archivos, "archivos convertidos.")
+print("Proceso completado,",cant_archivos, "archivos convertidos.*")
