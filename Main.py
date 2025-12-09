@@ -38,10 +38,7 @@ except ImportError:
 # Definiciones del texto.
 font = "LM Roman 10"
 fontSize = "20px"
-if os.path.exists('Spice-a-PDF'):
-    font_path = os.path.join('Spice-a-PDF', 'fonts', 'lmroman10-regular.ttf')
-else:
-    font_path = os.path.join('fonts', 'lmroman10-regular.ttf')
+font_path = os.path.join('fonts', 'lmroman10-regular.ttf')
 
 
 minx = 0
@@ -1203,10 +1200,7 @@ def svg_to_pdf(svg_filename, pdf_filename):
 # Ejemplo de uso
 
 # Directorios de entrada y salida
-if os.path.exists('Spice-a-PDF'):
-    input_dir = '.'
-else:
-    input_dir = 'ASC_Files'
+input_dir = 'ASC_Files'
 output_dir = 'PDFs'
 root_dir = os.getcwd()  # Directorio raíz del programa
 
