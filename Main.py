@@ -514,7 +514,7 @@ class node(Component):
         offsetx = offset_text(slf, 16,-16,-16,16, slf.flip)
         offsety = offset_text(slf, 16,16,-16,-16)
         slf.position = (x + offsetx, y + offsety)
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/FLAG.svg')
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/flag.svg')
 
 
 class Not(Component):
