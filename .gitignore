@@ -1,4 +1,8 @@
-# ignore all .asc files hola
-/ASC_Files/Privado/
-/PDFs/Privado/
+# ignore all .asc files inside Privado
+/ASC_Files/Privado/*
+/PDFs/Privado/*
 *.lnk
+
+# Keep placeholder so directory exists
+!/ASC_Files/Privado/.gitkeep
+!/PDFs/Privado/.gitkeep
