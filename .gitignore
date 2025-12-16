@@ -1,4 +1,4 @@
-# ignore all .asc files
+# ignore all .asc files hola
 /ASC_Files/Privado/
 /PDFs/Privado/
 *.lnk
