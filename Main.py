@@ -181,17 +181,6 @@ class Amp_Transimpedance(Component):
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             3, (36, 76, "Left")), slf.attributes.get("Value", " "), angle=(int(slf.orientation[1:])) % 180)
 
-
-class Amp_Yiu(Component):
-    def draw(slf, dwg):
-        slf.draw_image_with_rotation(dwg, 'Skins/Default/Amp_Yiu.svg')
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
-            0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
-            3, (-176, 32, "Left")), slf.attributes.get("Value", " "), "9px",  (int(slf.orientation[1:])) % 180)
-        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
-            123, (-176, 48, "Left")), slf.attributes.get("Value2", " "), "9px", (int(slf.orientation[1:])) % 180)
-
 class Ampmeter(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/ampmeter.svg')
@@ -533,6 +522,16 @@ class Not(Component):
 class OpAmp(Component):
     def draw(slf, dwg):
         slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Ideal.svg')
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            3, (-176, 32, "Left")), slf.attributes.get("Value", " "), "9px",  (int(slf.orientation[1:])) % 180)
+        slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
+            123, (-176, 48, "Left")), slf.attributes.get("Value2", " "), "9px", (int(slf.orientation[1:])) % 180)
+
+class OA_Yiu(Component):
+    def draw(slf, dwg):
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/OA_Yiu.svg')
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
             0, (-113, 80, "Left")), slf.attributes.get("InstName", ""), angle=(int(slf.orientation[1:])) % 180)
         slf.add_text(dwg, slf.position[0], slf.position[1], slf.windows.get(
@@ -1091,7 +1090,6 @@ def create_circuit_svg(filename, wires, lines, components, comments):
         "7805": LM7805,
         "Amp_Current": Amp_Current,
         "Amp_Transimpedance": Amp_Transimpedance,
-        "Amp_Yiu": Amp_Yiu,
         "ampmeter": Ampmeter,
         "arrow": Arrow,
         "arrow_curve": Arrow_curve,
@@ -1125,6 +1123,7 @@ def create_circuit_svg(filename, wires, lines, components, comments):
         "OA_Ideal": OpAmp,
         "OA_Signal": OA_Signal,
         "OA_Signal2": OA_Signal2,
+        "OA_Yiu": OA_Yiu,
         "pjf": PJFet,
         "pmos": PMOS,
         "pmos4": PMOS4,
