@@ -86,19 +86,35 @@
     <polyline class="st2" points="77.03 76.58 79.73 76.58 82.43 76.58"/>
   </g>
   <line class="st2" x1="79.73" y1="55.99" x2="79.73" y2="63.98"/>
-  <line class="st2" x1="79.73" y1="0" x2="79.73" y2="7.99"/>
+  <line class="st2" x1="79.73" x2="79.73" y2="7.99"/>
   <g class="st6">
-    <text class="st5" transform="translate(42.72 -14.3)"><tspan x="0" y="0">r</tspan></text>
-    <text class="st7" transform="translate(54.7 -14.3)"><tspan x="0" y="0">i</tspan></text>
+    <g class="st6">
+      <text class="st5" transform="translate(42.72 -14.3)"><tspan x="0" y="0">r</tspan></text>
+    </g>
+    <g class="st6">
+      <text class="st7" transform="translate(54.7 -14.3)"><tspan x="0" y="0">i</tspan></text>
+    </g>
   </g>
   <g class="st6">
-    <text class="st5" transform="translate(121.42 -16.3)"><tspan x="0" y="0">r</tspan></text>
-    <text class="st7" transform="translate(133.4 -16.3)"><tspan x="0" y="0">o</tspan></text>
+    <g class="st6">
+      <text class="st5" transform="translate(121.42 -16.3)"><tspan x="0" y="0">r</tspan></text>
+    </g>
+    <g class="st6">
+      <text class="st7" transform="translate(133.4 -16.3)"><tspan x="0" y="0">o</tspan></text>
+    </g>
   </g>
   <g class="st6">
-    <text class="st8" transform="translate(105.9 48.59)"><tspan x="0" y="0">A</tspan></text>
-    <text class="st7" transform="translate(125.9 48.59)"><tspan x="0" y="0">0</tspan></text>
-    <text class="st9" transform="translate(132.99 48.59)"><tspan x="0" y="0">.</tspan></text>
-    <text class="st4" transform="translate(137.72 48.59)"><tspan x="0" y="0">ε</tspan></text>
+    <g class="st6">
+      <text class="st8" transform="translate(105.9 48.59)"><tspan x="0" y="0">A</tspan></text>
+    </g>
+    <g class="st6">
+      <text class="st7" transform="translate(125.9 48.59)"><tspan x="0" y="0">0</tspan></text>
+    </g>
+    <g class="st6">
+      <text class="st9" transform="translate(132.99 48.59)"><tspan x="0" y="0">.</tspan></text>
+    </g>
+    <g class="st6">
+      <text class="st4" transform="translate(137.72 48.59)"><tspan x="0" y="0">ε</tspan></text>
+    </g>
   </g>
 </svg>

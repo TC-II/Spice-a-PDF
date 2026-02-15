@@ -1,24 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 27.8.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 32 64" style="enable-background:new 0 0 32 64;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-</style>
-<polygon class="st0" points="-192,104 -192,-8 -80,48 "/>
-<g>
-	<path d="M-178.7,75.9v3.6h3.5v0.9h-3.5v3.7h-1v-3.7h-3.5v-0.9h3.5v-3.6H-178.7z"/>
-</g>
-<g>
-	<path d="M-175.2,15.5v1h-8v-1H-175.2z"/>
-</g>
-<line class="st0" x1="-144" y1="0" x2="-144" y2="16"/>
-<line class="st0" x1="-144" y1="80" x2="-144" y2="96"/>
-<g>
-	<path d="M-127.5-4.1v3.6h3.5v0.9h-3.5v3.7h-1V0.4h-3.5v-0.9h3.5v-3.6H-127.5z"/>
-</g>
-<g>
-	<path d="M-124,95.5v1h-8v-1H-124z"/>
-</g>
-<line class="st0" x1="-96" y1="56" x2="-96" y2="96"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 32 64">
+  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <polygon class="st0" points="-192 104 -192 -8 -80 48 -192 104"/>
+  <path d="M-178.7,75.9v3.6h3.5v.9h-3.5v3.7h-1v-3.7h-3.5v-.9h3.5v-3.6h1Z"/>
+  <path d="M-175.2,15.5v1h-8v-1h8Z"/>
+  <line class="st0" x1="-144" x2="-144" y2="16"/>
+  <line class="st0" x1="-144" y1="80" x2="-144" y2="96"/>
+  <path d="M-127.5-4.1V-.5h3.5V.4h-3.5v3.7h-1V.4h-3.5V-.5h3.5v-3.6h1Z"/>
+  <path d="M-124,95.5v1h-8v-1h8Z"/>
+  <line class="st0" x1="-96" y1="56" x2="-96" y2="96"/>
 </svg>

@@ -30,14 +30,14 @@
       }
     </style>
   </defs>
-  <line class="st3" y1="0" y2="11"/>
+  <line class="st3" y2="11"/>
   <line class="st3" y1="69" y2="80"/>
   <g>
     <polygon class="st4" points="-3.7 43.1 0 56.9 3.7 43.1 -3.7 43.1"/>
     <g>
       <line class="st1" y1="23.6" y2="43.1"/>
-      <rect class="st0" x="-.5" y="23.1" width="1" height="20.5" transform="translate(0 66.7) rotate(180)"/>
+      <rect class="st0" x="-.5" y="23.1" width="1" height="20.5"/>
     </g>
   </g>
-  <rect class="st2" x="-20.5" y="19.5" width="41" height="41" transform="translate(-28.28 11.72) rotate(-45)"/>
+  <rect class="st2" x="-20.5" y="19.5" width="41" height="41" transform="translate(-28.29 11.72) rotate(-45)"/>
 </svg>
