@@ -326,6 +326,10 @@ class Diode(Component):
         slf.add_text(dwg, slf.position[0] + 3, slf.position[1] - 4 + offsety,
                      slf.windows.get(3, (24, 64, "Left")), slf.attributes.get("Value", " "))
 
+class Dif(Component):
+    def draw(slf, dwg):
+        offsety = offset_text(slf, 0, 0, 0, 3)
+        slf.draw_image_with_rotation(dwg, 'Skins/Default/dif.svg')
 
 class Diode45(Component):
     def draw(slf, dwg):
@@ -1115,6 +1119,7 @@ def create_circuit_svg(filename, wires, lines, components, comments):
         "cap": Capacitor,
         "current": Current,
         "cell": Cell,
+        "dif": Dif,
         "diode": Diode,
         "diode_45": Diode45,
         "e": E,
